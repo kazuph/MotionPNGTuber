@@ -111,6 +111,26 @@ def ensure_even_ge2(n: int) -> int:
     return n if (n % 2 == 0) else (n - 1)
 
 
+def resolve_adjacent_or_repo_script(script_name: str, *, anchor_file: str | None = None) -> str:
+    """パッケージ直下またはリポジトリ直下にある補助スクリプトを解決"""
+    anchor = os.path.abspath(anchor_file or __file__)
+    module_dir = os.path.dirname(anchor)
+    repo_root = os.path.dirname(module_dir)
+    candidates: List[str] = []
+
+    for base_dir in (module_dir, repo_root):
+        candidate = os.path.join(base_dir, script_name)
+        if candidate not in candidates:
+            candidates.append(candidate)
+
+    for candidate in candidates:
+        if os.path.isfile(candidate):
+            return candidate
+
+    searched = ", ".join(candidates)
+    raise FileNotFoundError(f"Script not found: {script_name} (searched: {searched})")
+
+
 # ---------------------------------------------------------------------------
 # Track loading (compatible with face_track_anime_detector.py output)
 # ---------------------------------------------------------------------------
@@ -505,11 +525,7 @@ class MouthSpriteExtractor:
             return track_out
         
         # face_track_anime_detector.py を実行
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        detector_script = os.path.join(script_dir, "face_track_anime_detector.py")
-        
-        if not os.path.isfile(detector_script):
-            raise FileNotFoundError(f"Detector script not found: {detector_script}")
+        detector_script = resolve_adjacent_or_repo_script("face_track_anime_detector.py")
         
         cmd = [
             resolve_python_subprocess_executable(),

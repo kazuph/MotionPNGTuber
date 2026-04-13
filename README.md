@@ -9,53 +9,58 @@
 
 By using looping video, you can achieve rich expressions like **hair swaying** and **clothing fluttering** that traditional PNGTubers can't deliver. No specialized knowledge like Live2D is required --- just an MP4 video and mouth sprites to get started.
 
-## Updates
+📖 **[How to use (YouTube)](https://www.youtube.com/watch?v=mxZHzZ_eAkY)**
+
+## 📢 Updates
 
 | Date | Details |
 |------|---------|
-| 2026/04/10 | **Developer snapshot release**. HUD display now defaults to OFF. Live IPC isolation, mouth-color regression fixes. Cleaned up unused assets and review files |
-| 2026/04/05 | **Ubuntu 22.04 experimental support** (Linux audio input via PulseAudio/PipeWire, `audio_device_spec` for `sd:`/`pa:` selection). **Added mouth PNG color correction & live auto-correction** (brightness/saturation/color temperature sliders, edge-priority correction, auto color-blending button). Repository cleanup, `mouth_track_gui` stability fixes |
-| 2026/04/04 | Reorganized `mouth_track_gui` for current workflow. Fixed Mac open handling and Japanese path issues. Added mouth placement margin factor to advanced settings. Added lightweight preview to check pad/mouth-erase range before full export |
-| 2026/04/03 | Revised mouth PNG extraction GUI, stable checkpoint cleanup |
+| 2026/04/13 | Fixed a critical bug where selecting a video in **Create mouth PNG sprites** could immediately fail with `Analysis error` because the auto detector script path was resolved incorrectly. Added a regression test for script-path lookup |
+| 2026/04/10 | **Developer snapshot release**. HUD display now defaults to OFF. Internal refactoring and bug fixes |
+| 2026/04/05 | **Ubuntu 22.04 experimental support** (Linux microphone input now available). **Added mouth PNG color correction** (brightness/saturation/color temperature sliders + auto-correction button). Improved GUI stability |
+| 2026/04/04 | Improved GUI usability. Fixed file opening and Japanese path issues on Mac. Added mouth placement margin factor to advanced settings. Added **lightweight preview** to check appearance before full export |
+| 2026/04/03 | Improved mouth PNG extraction GUI usability |
 | 2026/01/09 | Migrated package management to **uv** |
 
-## Features
+## ✨ Features
 
 | Feature | Description |
 |---------|-------------|
-| Real-time lip sync | Character's mouth moves in sync with microphone input |
-| Auto emotion detection | Estimates emotion from voice and auto-switches expressions |
-| Hair & physics motion | Looping video enables natural hair and clothing movement |
-| Mouth PNG color blending | Adjust brightness, saturation, color temperature via sliders + auto-correction |
-| macOS support | Runs on Apple Silicon (M1/M2/M3/M4) (experimental) |
-| Ubuntu support | Experimental support for Ubuntu 22.04 x86_64 |
+| 🎤 Real-time lip sync | Character's mouth moves in sync with microphone input |
+| 🎭 Auto emotion detection | Estimates emotion from voice and auto-switches expressions |
+| 💨 Hair & physics motion | Looping video enables natural hair and clothing movement |
+| 🎨 Mouth PNG color blending | Adjust brightness, saturation, color temperature via sliders + auto-correction |
+| 🍎 macOS support | Runs on Apple Silicon (M1/M2/M3/M4) (experimental) |
+| 🐧 Ubuntu support | Experimental support for Ubuntu 22.04 x86_64 |
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
-- [Quick Start](#quick-start)
-- [Installation](#installation)
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
   - [Windows](#windows)
   - [macOS (Experimental)](#macos-experimental)
   - [Ubuntu 22.04 (Experimental)](#ubuntu-2204-experimental)
-- [Usage](#usage)
+- [Usage](#-usage)
   - [Main GUI](#main-gui)
-  - [Mouth PNG Creation GUI](#mouth-png-creation-gui)
-  - [Visual Check (Lightweight)](#visual-check-lightweight)
-  - [Advanced Settings](#advanced-settings)
-  - [Mouth PNG Color Correction](#mouth-png-color-correction)
-- [Detailed Reference](#detailed-reference)
-- [Tests](#tests)
+  - [Mouth PNG Creation GUI](#-mouth-png-creation-gui)
+  - [Visual Check (Lightweight)](#-visual-check-lightweight)
+  - [Advanced Settings](#-advanced-settings)
+  - [Mouth PNG Color Correction](#-mouth-png-color-correction)
+- [Detailed Reference](#-detailed-reference)
+- [Tests](#-tests)
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Requirements
 
 - Python 3.10
 - uv (package manager)
+  - Windows: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+  - macOS / Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
 
 ### 3 Steps to Try
 
@@ -76,7 +81,7 @@ uv run python mouth_track_gui.py
 
 ---
 
-## Installation
+## 🔧 Installation
 
 ### Windows
 
@@ -111,21 +116,29 @@ uv run python -c "import cv2; import torch; print('OK')"
 <details>
 <summary><b>Click to expand (Apple Silicon: M1/M2/M3/M4)</b></summary>
 
-#### 1. Prepare pyproject.toml
+#### 1. Install uv
+
+```sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+#### 2. Prepare pyproject.toml
+
+macOS uses a dedicated dependency file (the default `pyproject.toml` contains dependencies that are not compatible with macOS).
 
 ```sh
 cp pyproject.toml pyproject.win.toml
 cp pyproject.macos.toml pyproject.toml
 ```
 
-#### 2. Base packages
+#### 3. Base packages
 
 ```sh
 uv venv .venv && uv sync
 uv pip install pip setuptools wheel torch==2.0.1 torchvision==0.15.2
 ```
 
-#### 3. Build xtcocotools from source
+#### 4. Build xtcocotools from source
 
 ```sh
 mkdir -p deps && cd deps
@@ -133,7 +146,7 @@ git clone https://github.com/jin-s13/xtcocoapi.git
 cd xtcocoapi && ../../.venv/bin/python -m pip install -e . && cd ../..
 ```
 
-#### 4. Build mmcv-full from source (~5 minutes)
+#### 5. Build mmcv-full from source (~5 minutes)
 
 ```sh
 cd deps
@@ -144,14 +157,14 @@ MMCV_WITH_OPS=1 FORCE_CUDA=0 ../../.venv/bin/python setup.py build_ext --inplace
 cd ../..
 ```
 
-#### 5. Remaining packages
+#### 6. Remaining packages
 
 ```sh
 uv pip install --no-build-isolation anime-face-detector
 uv pip install mmdet==2.28.0 mmpose==0.29.0
 ```
 
-#### 6. Launch
+#### 7. Launch
 
 ```sh
 .venv/bin/python mouth_track_gui.py
@@ -173,29 +186,34 @@ uv pip install mmdet==2.28.0 mmpose==0.29.0
 
 - Ubuntu 22.04 LTS
 - Python 3.10
-- `uv`
 - NVIDIA GPU / CUDA 11.7 compatible environment recommended
 
-#### 2. System packages
+#### 2. Install uv
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+#### 3. System packages
 
 ```bash
 sudo apt-get update
 sudo apt-get install -y libportaudio2 pulseaudio-utils
 ```
 
-#### 3. Install
+#### 4. Install
 
 ```bash
 uv sync
 ```
 
-#### 4. Verify
+#### 5. Verify
 
 ```bash
 uv run python -c "import cv2; import torch; print('OK')"
 ```
 
-#### 5. Launch
+#### 6. Launch
 
 ```bash
 uv run python mouth_track_gui.py
@@ -211,7 +229,7 @@ uv run python mouth_track_gui.py
 
 ---
 
-## Usage
+## 🎮 Usage
 
 ### Main GUI
 
@@ -219,10 +237,7 @@ uv run python mouth_track_gui.py
 uv run python mouth_track_gui.py
 ```
 
-On macOS, install dependencies from `pyproject.macos.toml` and use the same entry point.
-
-Note: the default `pyproject.toml` is intended for Windows / Linux dependencies.
-macOS uses `pyproject.macos.toml`, and the default `pyproject.toml` is now scoped so `uv` won't try to re-resolve `mmcv-full` for darwin.
+> 📝 On macOS, set up dependencies via the [macOS installation steps](#macos-experimental) before launching.
 
 #### Workflow
 
@@ -230,23 +245,23 @@ macOS uses `pyproject.macos.toml`, and the default `pyproject.toml` is now scope
 2. **Select video** → choose a loop video
 3. **Select mouth folder** → choose the folder containing mouth sprites
 4. **(1) Analyze → Calibrate** → adjust mouth position and press Space to confirm ([controls](#calibration-controls))
-5. **Visual check (lightweight)** → preview pad / mouth-erase range without full export
+5. **Visual check (lightweight)** → preview margin factor / mouth-erase range without full export
 6. **(2) Generate mouthless video** → generates video with mouth erased
 7. **(3) Live run** → speak into the mic and the mouth moves!
 8. **If the mouth color looks off** → press auto color-blending or adjust sliders manually ([details](#mouth-png-color-correction))
 
 #### Default Settings (changed 2026/04/10)
 
-| Setting | Default |
-|---------|---------|
-| Shadow blending (mouth erase) | ON |
-| HUD display | OFF |
+| Setting | Description | Default |
+|---------|-------------|---------|
+| Shadow blending (mouth erase) | Smoothly blends the boundary where the mouth was erased, making seams less noticeable | ON |
+| HUD display | Shows FPS, mouth open/close state, and other info on screen during live run | OFF |
 
 Both can be toggled via checkboxes in the GUI. If a value is already saved in the session, the saved value takes precedence.
 
 ---
 
-### Mouth PNG Creation GUI
+### 🖌️ Mouth PNG Creation GUI
 
 ```bash
 uv run python mouth_sprite_extractor_gui.py
@@ -258,29 +273,30 @@ During analysis after selecting a video, the **Processing Status** area at the t
 
 ---
 
-### Visual Check (Lightweight)
+### 🔍 Visual Check (Lightweight)
 
-A preview for quickly checking **pad** and **mouth-erase range** before exporting the full mouthless video.
+A preview for quickly checking the **margin factor** and **mouth-erase range** before exporting the full mouthless video.
 
 - Uses existing `mouth_track.npz` / `mouth_track_calibrated.npz` as-is, so you can skip heavy processing
 - If `open.png` is found, you can also see how the mouth PNG overlays
 - Press `Enter` to apply the selected settings to the GUI
+- ⚠️ If you change the margin factor, you need to re-run **(1) Analyze → Calibrate**
 
 #### Key Controls
 
 | Key | Function |
 |-----|----------|
-| Top buttons / `1` `2` `3` | Select pad candidate |
+| Top buttons / `1` `2` `3` | Select margin factor candidate |
 | `r` / `f` | Increase / decrease mouth-erase range |
 | `a` / `d` | Previous / next frame |
 | `[` / `]` | Jump 10 frames back / forward |
 | `Space` | Play / pause |
-| Apply to GUI button / `Enter` | Apply pad / mouth-erase range to GUI |
+| Apply to GUI button / `Enter` | Apply margin factor / mouth-erase range to GUI |
 | `Esc` / `q` | Close without applying |
 
 ---
 
-### Advanced Settings
+### ⚙️ Advanced Settings
 
 **Advanced settings can usually be left closed.**
 
@@ -296,13 +312,15 @@ The default value of **`2.1`** usually works fine.
 Recommended workflow:
 
 1. Run **(1) Analyze → Calibrate** with `2.1`
-2. **Visual check (lightweight)**
-3. Compare values around `1.9 / 2.1 / 2.3`
-4. Apply the best value, then run **(2) Generate mouthless video**
+2. **Visual check (lightweight)** --- compare values around `1.9 / 2.1 / 2.3`
+3. Apply the best value → re-run **(1) Analyze → Calibrate**
+4. Proceed to **(2) Generate mouthless video**
+
+> ⚠️ The margin factor is used during analysis, so changing it requires re-running **(1) Analyze → Calibrate**.
 
 ---
 
-### Mouth PNG Color Correction
+### 🎨 Mouth PNG Color Correction
 
 Adjusts color blending between mouth PNGs and the base video.
 Moving the sliders during live run **reflects changes in real time (~hundreds of ms)** without restarting the runtime.
@@ -340,10 +358,10 @@ You can still fine-tune with sliders after auto-correction.
 
 ---
 
-## Detailed Reference
+## 📚 Detailed Reference
 
 <details>
-<summary><b>What You Need</b></summary>
+<summary><b>📦 What You Need</b></summary>
 
 ### Video (.mp4)
 
@@ -367,7 +385,7 @@ You can still fine-tune with sliders after auto-correction.
 </details>
 
 <details>
-<summary><b>Calibration Controls</b></summary>
+<summary><b>🎯 Calibration Controls</b></summary>
 
 ### Mouse
 
@@ -391,7 +409,7 @@ You can still fine-tune with sliders after auto-correction.
 </details>
 
 <details>
-<summary><b>Emotion Detection</b></summary>
+<summary><b>🎭 Emotion Detection</b></summary>
 
 | Emotion | Detection Criteria |
 |---------|-------------------|
@@ -412,7 +430,7 @@ You can still fine-tune with sliders after auto-correction.
 </details>
 
 <details>
-<summary><b>Browser Output</b></summary>
+<summary><b>🌐 Browser Output</b></summary>
 
 After completing **(2) Generate mouthless video**, the following files are exported to the same folder:
 
@@ -435,7 +453,7 @@ python -m http.server 8000
 </details>
 
 <details>
-<summary><b>Command Line Usage</b></summary>
+<summary><b>⌨️ Command Line Usage</b></summary>
 
 ```bash
 # Face tracking
@@ -457,7 +475,7 @@ uv run python loop_lipsync_runtime_patched_emotion_auto.py \
 </details>
 
 <details>
-<summary><b>Directory Structure</b></summary>
+<summary><b>📁 Directory Structure</b></summary>
 
 ```text
 MotionPNGTuber/
@@ -507,12 +525,12 @@ MotionPNGTuber/
 </details>
 
 <details>
-<summary><b>Troubleshooting</b></summary>
+<summary><b>❓ Troubleshooting</b></summary>
 
 ### Mouth position is misaligned
 
 - First try **Recalibrate only**
-- If still too small / too large, use **Visual check (lightweight)** to compare `pad` values
+- If still too small / too large, use **Visual check (lightweight)** to compare margin factor values
 - Then adjust the **margin factor in advanced settings** slightly if needed
 
 ### Black smudge in mouth erase
@@ -544,11 +562,30 @@ uv run python -c "import torch; print(torch.cuda.is_available())"
 - If GPU fallback switches to CPU, processing becomes much slower but is still expected
 - Check the progress area and log before assuming the app has hung
 
+### `Analysis error` appears immediately after selecting a video in the mouth PNG GUI
+
+- Root cause (fixed on 2026-04-13): the GUI could fail before tracking started if the bundled detector script path was resolved incorrectly
+- Prevention: the detector launcher now searches both the package directory and the repository root, and this lookup is covered by a regression test
+- If you still see the error after updating, check the log pane for the exact exception and verify that `face_track_anime_detector.py` exists in the project
+
+</details>
+
+<details>
+<summary><b>🎁 Bonus Tools</b></summary>
+
+### Mouth Sprite Extraction CLI
+
+```bash
+uv run python mouth_sprite_extractor.py --video loop.mp4 --out mouth/
+```
+
+Extract mouth sprites (5 PNGs) directly from the command line without the GUI.
+
 </details>
 
 ---
 
-## Tests
+## 🧪 Tests
 
 ```bash
 # All tests
@@ -561,15 +598,15 @@ uv run python -m unittest discover -s tests -p "test_e2e_smoke.py" -v
 Note: keep `-s tests`. Plain `python -m unittest discover` may collect **0 tests**
 in this repository layout depending on the launch directory.
 
-As of 2026-04-10: verified with **257 tests / 3 skip** passing.
+As of 2026-04-13: verified with **261 tests / 3 skip** passing.
 
 ---
 
-## License
+## 📄 License
 
 MIT License
 
-## Acknowledgements
+## 🙏 Acknowledgements
 
 - [anime-face-detector](https://github.com/hysts/anime-face-detector)
 - [MMDetection](https://github.com/open-mmlab/mmdetection)
