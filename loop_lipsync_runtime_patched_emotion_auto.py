@@ -386,7 +386,11 @@ class WavAudioInputStream:
         self._thread: threading.Thread | None = None
         self._stream = None
         self._pos = 0
-        self.audio, self.samplerate = load_wav_mono_float32(wav_path)
+        playback_audio, playback_samplerate = load_wav_mono_float32(wav_path)
+        self.playback_audio = playback_audio
+        self.playback_samplerate = int(playback_samplerate)
+        self.audio = playback_audio
+        self.samplerate = int(playback_samplerate)
         if target_samplerate and int(target_samplerate) > 0 and int(target_samplerate) != int(self.samplerate):
             self.audio = resample_linear_float32(self.audio, int(self.samplerate), int(target_samplerate))
             self.samplerate = int(target_samplerate)
@@ -394,19 +398,31 @@ class WavAudioInputStream:
     def __enter__(self):
         self._stop.clear()
         if self.play_audio:
+            try:
+                default_output = sd.default.device[1] if isinstance(sd.default.device, (list, tuple)) else sd.default.device
+                output_info = sd.query_devices(default_output)
+                output_samplerate = int(round(float(output_info.get("default_samplerate") or self.playback_samplerate)))
+            except Exception:
+                output_samplerate = self.playback_samplerate
+            if output_samplerate > 0 and output_samplerate != self.playback_samplerate:
+                self.playback_audio = resample_linear_float32(
+                    self.playback_audio,
+                    self.playback_samplerate,
+                    output_samplerate,
+                )
+                self.playback_samplerate = output_samplerate
             self._stream = sd.OutputStream(
-                samplerate=self.samplerate,
+                samplerate=self.playback_samplerate,
                 channels=1,
-                blocksize=self.blocksize,
+                blocksize=max(1, int(round(self.blocksize * float(self.playback_samplerate) / float(max(1, self.samplerate))))),
                 dtype="float32",
                 callback=self._output_cb,
                 latency="low",
             )
             self._stream.start()
             self.latency = float(getattr(self._stream, "latency", 0.0) or 0.0)
-        else:
-            self._thread = threading.Thread(target=self._run, name="wav-audio-input", daemon=True)
-            self._thread.start()
+        self._thread = threading.Thread(target=self._run, name="wav-audio-input", daemon=True)
+        self._thread.start()
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
@@ -418,8 +434,9 @@ class WavAudioInputStream:
         if self._thread is not None:
             self._thread.join(timeout=1.0)
 
-    def _read_chunk(self, start: int, frames: int) -> np.ndarray:
-        n = int(self.audio.shape[0])
+    @staticmethod
+    def _read_chunk_looped(audio: np.ndarray, start: int, frames: int) -> np.ndarray:
+        n = int(audio.shape[0])
         out = np.zeros((int(frames),), dtype=np.float32)
         if n <= 0:
             return out
@@ -434,22 +451,34 @@ class WavAudioInputStream:
             start = 0
         return out
 
+    @staticmethod
+    def _read_chunk_once(audio: np.ndarray, start: int, frames: int) -> tuple[np.ndarray, bool]:
+        n = int(audio.shape[0])
+        out = np.zeros((int(frames),), dtype=np.float32)
+        if n <= 0 or start >= n:
+            return out, True
+        take = min(int(frames), n - int(start))
+        out[:take] = audio[int(start):int(start) + take]
+        return out, (int(start) + take) >= n
+
     def _output_cb(self, outdata, frames, time_info, status) -> None:
-        chunk = self._read_chunk(self._pos, int(frames))
+        chunk, done = self._read_chunk_once(self.playback_audio, self._pos, int(frames))
         chunk_2d = chunk.reshape(-1, 1)
         outdata[:] = chunk_2d
-        self.callback(chunk_2d, int(frames), time_info, status)
-        self._pos = (self._pos + int(frames)) % max(1, int(self.audio.shape[0]))
+        self._pos += int(frames)
+        if done:
+            self._stop.set()
 
     def _run(self) -> None:
         pos = 0
         n = int(self.audio.shape[0])
         while not self._stop.is_set():
-            chunk = self._read_chunk(pos, self.blocksize)
+            chunk, done = self._read_chunk_once(self.audio, pos, self.blocksize)
             self.callback(chunk.reshape(-1, 1), self.blocksize, None, None)
             pos += self.blocksize
-            if pos >= n:
-                pos = 0
+            if done or pos >= n:
+                self._stop.set()
+                break
             time.sleep(self.blocksize / float(max(1, self.samplerate)))
 
 
