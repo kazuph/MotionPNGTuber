@@ -385,6 +385,7 @@ class WavAudioInputStream:
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
         self._stream = None
+        self._stream_lock = threading.RLock()
         self._pos = 0
         playback_audio, playback_samplerate = load_wav_mono_float32(wav_path)
         self.playback_audio = playback_audio
@@ -427,12 +428,23 @@ class WavAudioInputStream:
 
     def __exit__(self, exc_type, exc, tb) -> None:
         self._stop.set()
-        if self._stream is not None:
-            self._stream.stop()
-            self._stream.close()
-            self._stream = None
+        self._close_output_stream()
         if self._thread is not None:
             self._thread.join(timeout=1.0)
+
+    def _close_output_stream(self) -> None:
+        with self._stream_lock:
+            if self._stream is None:
+                return
+            try:
+                self._stream.stop()
+            except Exception:
+                pass
+            try:
+                self._stream.close()
+            except Exception:
+                pass
+            self._stream = None
 
     @staticmethod
     def _read_chunk_looped(audio: np.ndarray, start: int, frames: int) -> np.ndarray:
@@ -472,14 +484,17 @@ class WavAudioInputStream:
     def _run(self) -> None:
         pos = 0
         n = int(self.audio.shape[0])
-        while not self._stop.is_set():
-            chunk, done = self._read_chunk_once(self.audio, pos, self.blocksize)
-            self.callback(chunk.reshape(-1, 1), self.blocksize, None, None)
-            pos += self.blocksize
-            if done or pos >= n:
-                self._stop.set()
-                break
-            time.sleep(self.blocksize / float(max(1, self.samplerate)))
+        try:
+            while not self._stop.is_set():
+                chunk, done = self._read_chunk_once(self.audio, pos, self.blocksize)
+                self.callback(chunk.reshape(-1, 1), self.blocksize, None, None)
+                pos += self.blocksize
+                if done or pos >= n:
+                    self._stop.set()
+                    break
+                time.sleep(self.blocksize / float(max(1, self.samplerate)))
+        finally:
+            self._close_output_stream()
 
 
 def load_wav_mono_float32(path: str) -> tuple[np.ndarray, int]:
@@ -513,11 +528,12 @@ def resample_linear_float32(audio: np.ndarray, src_sr: int, dst_sr: int) -> np.n
 
 
 class SwitchableAudioInputStream:
-    """Runtime-switchable input stream; TTS WAV uses the same callback path as mic input."""
+    """Keep mic input alive and overlay TTS WAV through the same callback path."""
 
     def __init__(self, initial_stream, blocksize: int, callback, samplerate: int) -> None:
         self._lock = threading.RLock()
         self._stream = initial_stream
+        self._tts_stream: WavAudioInputStream | None = None
         self.blocksize = max(1, int(blocksize))
         self.callback = callback
         self.samplerate = int(samplerate)
@@ -534,6 +550,7 @@ class SwitchableAudioInputStream:
 
     def __exit__(self, exc_type, exc, tb) -> None:
         with self._lock:
+            self._close_tts()
             self._close_current()
             self._entered = False
 
@@ -547,6 +564,15 @@ class SwitchableAudioInputStream:
         except Exception as e:
             print(f"[audio warn] failed to close stream: {e}")
 
+    def _close_tts(self) -> None:
+        if self._tts_stream is None:
+            return
+        try:
+            self._tts_stream.__exit__(None, None, None)
+        except Exception as e:
+            print(f"[audio warn] failed to close TTS stream: {e}")
+        self._tts_stream = None
+
     def switch_to_wav(self, wav_path: str, *, play_audio: bool = True) -> None:
         next_stream = WavAudioInputStream(
             wav_path,
@@ -556,11 +582,14 @@ class SwitchableAudioInputStream:
             target_samplerate=self.samplerate,
         )
         with self._lock:
+            self._close_tts()
             next_stream.__enter__()
-            self._close_current()
-            self._stream = next_stream
-            self.latency = float(getattr(next_stream, "latency", 0.0) or 0.0)
-        print(f"[audio] switched to TTS WAV: {wav_path}")
+            self._tts_stream = next_stream
+            self.latency = max(
+                float(getattr(self._stream, "latency", 0.0) or 0.0),
+                float(getattr(next_stream, "latency", 0.0) or 0.0),
+            )
+        print(f"[audio] started TTS WAV overlay: {wav_path}")
 
 
 def synthesize_irodori_tts(text: str, out_dir: str) -> str:
