@@ -386,6 +386,7 @@ class WavAudioInputStream:
         self._thread: threading.Thread | None = None
         self._stream = None
         self._stream_lock = threading.RLock()
+        self._play_proc: subprocess.Popen | None = None
         self._pos = 0
         playback_audio, playback_samplerate = load_wav_mono_float32(wav_path)
         self.playback_audio = playback_audio
@@ -399,35 +400,49 @@ class WavAudioInputStream:
     def __enter__(self):
         self._stop.clear()
         if self.play_audio:
-            try:
-                default_output = sd.default.device[1] if isinstance(sd.default.device, (list, tuple)) else sd.default.device
-                output_info = sd.query_devices(default_output)
-                output_samplerate = int(round(float(output_info.get("default_samplerate") or self.playback_samplerate)))
-            except Exception:
-                output_samplerate = self.playback_samplerate
-            if output_samplerate > 0 and output_samplerate != self.playback_samplerate:
-                self.playback_audio = resample_linear_float32(
-                    self.playback_audio,
-                    self.playback_samplerate,
-                    output_samplerate,
+            if sys.platform == "darwin":
+                self._play_proc = subprocess.Popen(
+                    ["afplay", self.wav_path],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
                 )
-                self.playback_samplerate = output_samplerate
-            self._stream = sd.OutputStream(
-                samplerate=self.playback_samplerate,
-                channels=1,
-                blocksize=max(1, int(round(self.blocksize * float(self.playback_samplerate) / float(max(1, self.samplerate))))),
-                dtype="float32",
-                callback=self._output_cb,
-                latency="low",
-            )
-            self._stream.start()
-            self.latency = float(getattr(self._stream, "latency", 0.0) or 0.0)
+            else:
+                try:
+                    default_output = sd.default.device[1] if isinstance(sd.default.device, (list, tuple)) else sd.default.device
+                    output_info = sd.query_devices(default_output)
+                    output_samplerate = int(round(float(output_info.get("default_samplerate") or self.playback_samplerate)))
+                except Exception:
+                    output_samplerate = self.playback_samplerate
+                if output_samplerate > 0 and output_samplerate != self.playback_samplerate:
+                    self.playback_audio = resample_linear_float32(
+                        self.playback_audio,
+                        self.playback_samplerate,
+                        output_samplerate,
+                    )
+                    self.playback_samplerate = output_samplerate
+                self._stream = sd.OutputStream(
+                    samplerate=self.playback_samplerate,
+                    channels=1,
+                    blocksize=max(1, int(round(self.blocksize * float(self.playback_samplerate) / float(max(1, self.samplerate))))),
+                    dtype="float32",
+                    callback=self._output_cb,
+                    latency="low",
+                )
+                self._stream.start()
+                self.latency = float(getattr(self._stream, "latency", 0.0) or 0.0)
         self._thread = threading.Thread(target=self._run, name="wav-audio-input", daemon=True)
         self._thread.start()
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
         self._stop.set()
+        if self._play_proc is not None:
+            try:
+                if self._play_proc.poll() is None:
+                    self._play_proc.terminate()
+            except Exception:
+                pass
+            self._play_proc = None
         self._close_output_stream()
         if self._thread is not None:
             self._thread.join(timeout=1.0)
