@@ -24,6 +24,7 @@ import sys
 import threading
 import time
 import queue
+import wave
 from dataclasses import dataclass
 
 try:
@@ -241,6 +242,46 @@ def _select_runtime_mouth_view(
     return next_emotion, mouth_sets[next_emotion]
 
 
+def _emotion_button_label(name: str) -> str:
+    lower = name.lower()
+    labels = {
+        "joy": "喜",
+        "happy": "喜",
+        "anger": "怒",
+        "angry": "怒",
+        "sad": "哀",
+        "surprise": "驚",
+        "surprised": "驚",
+    }
+    return labels.get(lower, name)
+
+
+def _sort_emotions_for_ui(emotions: list[str]) -> list[str]:
+    order = {
+        "joy": 0,
+        "happy": 0,
+        "anger": 1,
+        "angry": 1,
+        "sad": 2,
+        "surprise": 3,
+        "surprised": 3,
+    }
+    return sorted(emotions, key=lambda x: (order.get(x.lower(), 99), x.lower()))
+
+
+def _resolve_emotion_asset_paths(emotion_video_dir: str, emotion: str) -> tuple[str, str, str]:
+    base = os.path.abspath(emotion_video_dir)
+    candidates = [
+        os.path.join(base, f"loop_{emotion}_mouthless.mp4"),
+        os.path.join(base, f"{emotion}_mouthless.mp4"),
+        os.path.join(base, f"loop_{emotion}.mp4"),
+    ]
+    video = next((p for p in candidates if os.path.isfile(p)), candidates[0])
+    track = os.path.join(base, f"mouth_track_{emotion}.npz")
+    track_calibrated = os.path.join(base, f"mouth_track_{emotion}_calibrated.npz")
+    return video, track, track_calibrated
+
+
 @dataclass(frozen=True)
 class MouthColorRebuildResult:
     updated_at: float
@@ -319,6 +360,103 @@ class AsyncMouthColorRebuilder:
                     self._wake.set()
                     continue
                 self._ready = result
+
+
+class WavAudioInputStream:
+    """Feed a WAV file through the same callback path as sounddevice.InputStream."""
+
+    def __init__(self, wav_path: str, blocksize: int, callback, *, play_audio: bool = False) -> None:
+        self.wav_path = wav_path
+        self.blocksize = max(1, int(blocksize))
+        self.callback = callback
+        self.play_audio = bool(play_audio)
+        self.latency = 0.0
+        self._stop = threading.Event()
+        self._thread: threading.Thread | None = None
+        self._stream = None
+        self._pos = 0
+        self.audio, self.samplerate = load_wav_mono_float32(wav_path)
+
+    def __enter__(self):
+        self._stop.clear()
+        if self.play_audio:
+            self._stream = sd.OutputStream(
+                samplerate=self.samplerate,
+                channels=1,
+                blocksize=self.blocksize,
+                dtype="float32",
+                callback=self._output_cb,
+                latency="low",
+            )
+            self._stream.start()
+            self.latency = float(getattr(self._stream, "latency", 0.0) or 0.0)
+        else:
+            self._thread = threading.Thread(target=self._run, name="wav-audio-input", daemon=True)
+            self._thread.start()
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        self._stop.set()
+        if self._stream is not None:
+            self._stream.stop()
+            self._stream.close()
+            self._stream = None
+        if self._thread is not None:
+            self._thread.join(timeout=1.0)
+
+    def _read_chunk(self, start: int, frames: int) -> np.ndarray:
+        n = int(self.audio.shape[0])
+        out = np.zeros((int(frames),), dtype=np.float32)
+        if n <= 0:
+            return out
+        start = int(start) % n
+        remaining = int(frames)
+        dst = 0
+        while remaining > 0:
+            take = min(remaining, n - start)
+            out[dst:dst + take] = self.audio[start:start + take]
+            dst += take
+            remaining -= take
+            start = 0
+        return out
+
+    def _output_cb(self, outdata, frames, time_info, status) -> None:
+        chunk = self._read_chunk(self._pos, int(frames))
+        chunk_2d = chunk.reshape(-1, 1)
+        outdata[:] = chunk_2d
+        self.callback(chunk_2d, int(frames), time_info, status)
+        self._pos = (self._pos + int(frames)) % max(1, int(self.audio.shape[0]))
+
+    def _run(self) -> None:
+        pos = 0
+        n = int(self.audio.shape[0])
+        while not self._stop.is_set():
+            chunk = self._read_chunk(pos, self.blocksize)
+            self.callback(chunk.reshape(-1, 1), self.blocksize, None, None)
+            pos += self.blocksize
+            if pos >= n:
+                pos = 0
+            time.sleep(self.blocksize / float(max(1, self.samplerate)))
+
+
+def load_wav_mono_float32(path: str) -> tuple[np.ndarray, int]:
+    with wave.open(path, "rb") as wf:
+        channels = int(wf.getnchannels())
+        sampwidth = int(wf.getsampwidth())
+        samplerate = int(wf.getframerate())
+        frames = int(wf.getnframes())
+        raw = wf.readframes(frames)
+    if sampwidth == 1:
+        data = (np.frombuffer(raw, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
+    elif sampwidth == 2:
+        data = np.frombuffer(raw, dtype="<i2").astype(np.float32) / 32768.0
+    elif sampwidth == 4:
+        data = np.frombuffer(raw, dtype="<i4").astype(np.float32) / 2147483648.0
+    else:
+        raise ValueError(f"unsupported WAV sample width: {sampwidth}")
+    if channels > 1:
+        data = data.reshape(-1, channels).mean(axis=1)
+    return data.astype(np.float32, copy=False), samplerate
 
 
 def _apply_runtime_mouth_color_update(
@@ -448,36 +586,39 @@ def start_emotion_selector_gui(
                 font_norm = None
 
             lbl_kwargs = {"font": font_bold} if font_bold else {}
-            tk.Label(frm, text="Emotion / Mouth Set", **lbl_kwargs).pack(anchor="w")
+            tk.Label(frm, text="Emotion", **lbl_kwargs).pack(anchor="w")
 
-            var = tk.StringVar(value=initial)
-
-            def push_selection():
-                v = var.get()
+            def push_selection(v: str):
                 try:
                     selection_q.put_nowait(v)
                 except Exception:
                     pass
 
-            rb_kwargs = {"font": font_norm} if font_norm else {}
+            btn_kwargs = {"font": font_norm} if font_norm else {}
 
             for emo in emotions:
-                rb = tk.Radiobutton(
+                btn = tk.Button(
                     frm,
-                    text=emo,
-                    value=emo,
-                    variable=var,
-                    command=push_selection,
-                    anchor="w",
-                    justify="left",
-                    **rb_kwargs,
+                    text=f"{_emotion_button_label(emo)}  {emo}",
+                    command=lambda v=emo: push_selection(v),
+                    anchor="center",
+                    **btn_kwargs,
                 )
-                rb.pack(fill="x", pady=1)
+                btn.pack(fill="x", pady=2)
 
-            push_selection()
+            push_selection(initial)
 
             try:
                 root.attributes("-topmost", True)
+            except Exception:
+                pass
+            try:
+                root.update_idletasks()
+                sw = root.winfo_screenwidth()
+                sh = root.winfo_screenheight()
+                ww = max(160, root.winfo_reqwidth())
+                wh = max(140, root.winfo_reqheight())
+                root.geometry(f"{ww}x{wh}+{max(0, sw - ww - 24)}+{max(0, sh - wh - 80)}")
             except Exception:
                 pass
 
@@ -495,6 +636,76 @@ def start_emotion_selector_gui(
     th = threading.Thread(target=_runner, daemon=True)
     th.start()
     return th
+
+
+def start_emotion_buttons_gui(
+    emotions: list[str],
+    initial: str,
+    selection_q: "queue.Queue[str]",
+    title: str = "Mouth Emotion",
+):
+    """Create a small main-thread Tk button panel for macOS-safe emotion switching."""
+    if tk is None:
+        print("[warn] tkinter is not available; emotion GUI is disabled.")
+        return None
+    if not emotions:
+        return None
+
+    root = tk.Tk()
+    root.title(title)
+    frm = tk.Frame(root, padx=10, pady=10)
+    frm.pack(fill="both", expand=True)
+
+    if platform.system() == "Windows":
+        font_bold = ("Meiryo", 12, "bold")
+        font_norm = ("Meiryo", 11)
+    else:
+        font_bold = None
+        font_norm = None
+
+    lbl_kwargs = {"font": font_bold} if font_bold else {}
+    tk.Label(frm, text="Emotion", **lbl_kwargs).pack(anchor="w")
+
+    def push_selection(v: str):
+        try:
+            selection_q.put_nowait(v)
+        except Exception:
+            pass
+
+    btn_kwargs = {"font": font_norm} if font_norm else {}
+    for emo in emotions:
+        btn = tk.Button(
+            frm,
+            text=f"{_emotion_button_label(emo)}  {emo}",
+            command=lambda v=emo: push_selection(v),
+            anchor="center",
+            **btn_kwargs,
+        )
+        btn.pack(fill="x", pady=2)
+
+    try:
+        root.attributes("-topmost", True)
+    except Exception:
+        pass
+    try:
+        root.update_idletasks()
+        sw = root.winfo_screenwidth()
+        sh = root.winfo_screenheight()
+        ww = max(160, root.winfo_reqwidth())
+        wh = max(140, root.winfo_reqheight())
+        root.geometry(f"{ww}x{wh}+{max(0, sw - ww - 24)}+{max(0, sh - wh - 80)}")
+    except Exception:
+        pass
+
+    def _on_close():
+        try:
+            root.destroy()
+        except Exception:
+            pass
+
+    root.protocol("WM_DELETE_WINDOW", _on_close)
+    push_selection(initial)
+    return root
 
 
 # ========= emotion auto / HUD =========
@@ -700,15 +911,23 @@ def run(args) -> None:
             audio_resolution.get("strategy"),
         )
 
-    try:
-        _resolve_input_device(prefer_default_source=False)
-    except Exception as e:
-        raw_spec = normalize_audio_device_spec(getattr(args, "audio_device_spec", "") or args.device)
-        if raw_spec and str(raw_spec).startswith("pa:") and allow_default_source_switch:
-            print(f"[audio] primary resolution failed, retrying fallback: {e}")
-            _resolve_input_device(prefer_default_source=True)
-        else:
-            raise
+    audio_file_path = str(getattr(args, "audio_file", "") or "").strip()
+    if audio_file_path:
+        if not os.path.isfile(audio_file_path):
+            raise FileNotFoundError(f"audio file not found: {audio_file_path}")
+        _audio_probe, samplerate = load_wav_mono_float32(audio_file_path)
+        input_channels = 1
+        print(f"[audio] using WAV file: {audio_file_path} sr:{samplerate}")
+    else:
+        try:
+            _resolve_input_device(prefer_default_source=False)
+        except Exception as e:
+            raw_spec = normalize_audio_device_spec(getattr(args, "audio_device_spec", "") or args.device)
+            if raw_spec and str(raw_spec).startswith("pa:") and allow_default_source_switch:
+                print(f"[audio] primary resolution failed, retrying fallback: {e}")
+                _resolve_input_device(prefer_default_source=True)
+            else:
+                raise
 
     # ---- video sources ----
     prev_w = int(full_w * args.preview_scale)
@@ -789,7 +1008,7 @@ def run(args) -> None:
         raise RuntimeError(f"All mouth sprite sets failed to load under: {args.mouth_dir}")
     color_rebuilder = AsyncMouthColorRebuilder(mouth_sets_original, inspect_levels)
 
-    emotions = sorted(mouth_sets.keys())
+    emotions = _sort_emotions_for_ui(list(mouth_sets.keys()))
 
     # Determine which folder corresponds to "neutral" (fallback to Default/Neutral/first)
     neutral_set = pick_mouth_set_for_label(emotions, "neutral")
@@ -877,6 +1096,7 @@ def run(args) -> None:
             print(f"[{tag} warn] sprite rebuild exceeded 200ms; async apply prevented render blocking.")
 
     emotion_q: queue.Queue[str] = queue.Queue()
+    selector_root = None
 
     # Optional HUD (emoji + label). Default ON, can be disabled by --no-emotion-hud
     hud_q: queue.Queue[str] = queue.Queue()
@@ -896,7 +1116,7 @@ def run(args) -> None:
 
     # Manual selector GUI is allowed only when emotion-auto is OFF
     if (not args.no_emotion_gui) and (not emotion_auto_enabled):
-        start_emotion_selector_gui(emotions, current_emotion, emotion_q, title="Mouth Emotion")
+        selector_root = start_emotion_buttons_gui(emotions, current_emotion, emotion_q, title="Dokochan Emotion")
 
     # Emotion auto analyzer
     emo_audio_q: queue.Queue[np.ndarray] | None = None
@@ -928,6 +1148,56 @@ def run(args) -> None:
     track_full = MouthTrack.load(track_path, full_w, full_h, policy=args.valid_policy) if vid_full is not None else None
     vid_full_auto: BgVideo | None = None
     track_full_auto: MouthTrack | None = None
+    emotion_video_dir = str(getattr(args, "emotion_video_dir", "") or "").strip()
+
+    def _switch_runtime_emotion(sel: str, *, source: str = "manual") -> None:
+        nonlocal current_emotion, mouth, vid_prev, vid_full, track_prev, track_full, vid_full_auto, track_full_auto, track_path
+        if sel not in mouth_sets:
+            return
+
+        current_emotion = sel
+        mouth = mouth_sets[current_emotion]
+
+        if emotion_video_dir:
+            video_path, next_track, next_track_calibrated = _resolve_emotion_asset_paths(emotion_video_dir, current_emotion)
+            if not os.path.isfile(video_path):
+                print(f"[emotion warn] video not found for {current_emotion}: {video_path}")
+            else:
+                try:
+                    old_prev = vid_prev
+                    old_full = vid_full
+                    old_full_auto = vid_full_auto
+                    vid_prev = BgVideo(video_path, prev_w, prev_h)
+                    vid_full = BgVideo(video_path, full_w, full_h) if (args.use_virtual_cam and HAS_VCAM) else None
+                    if old_prev is not vid_prev:
+                        old_prev.close()
+                    if old_full is not None and old_full is not vid_full:
+                        old_full.close()
+                    if old_full_auto is not None:
+                        old_full_auto.close()
+                    vid_full_auto = None
+                    track_full_auto = None
+                    track_path = resolve_track_path(
+                        next_track,
+                        next_track_calibrated,
+                        prefer_calibrated=not args.no_prefer_calibrated,
+                    )
+                    track_prev = MouthTrack.load(track_path, prev_w, prev_h, policy=args.valid_policy)
+                    track_full = MouthTrack.load(track_path, full_w, full_h, policy=args.valid_policy) if vid_full is not None else None
+                    print(f"[emotion] switched -> {current_emotion} ({source}) video={os.path.basename(video_path)} track={os.path.basename(track_path)}")
+                except Exception as e:
+                    print(f"[emotion warn] failed to switch video/track for {current_emotion}: {e}")
+        else:
+            print(f"[emotion] switched -> {current_emotion} ({source})")
+
+        if bool(args.emotion_hud):
+            try:
+                hud_q.put_nowait(format_emotion_hud_text(infer_label_from_set_name(current_emotion)))
+            except Exception:
+                pass
+
+    if emotion_video_dir:
+        _switch_runtime_emotion(current_emotion, source="initial")
 
     if track_prev is None:
         print("[warn] mouth_track not found -> fallback to fixed placement")
@@ -974,6 +1244,14 @@ def run(args) -> None:
     window = np.hanning(hop).astype(np.float32)
     freqs = np.fft.rfftfreq(hop, d=1.0 / samplerate)
 
+    def _scheduled_perf_time(time_info) -> float:
+        try:
+            current = float(time_info.currentTime)
+            output = float(time_info.outputBufferDacTime)
+        except Exception:
+            return time.perf_counter()
+        return time.perf_counter() + max(0.0, output - current)
+
     def audio_cb(indata, frames, time_info, status):
         x = indata.astype(np.float32)
         if x.ndim == 2:
@@ -989,7 +1267,7 @@ def run(args) -> None:
         centroid = float(np.clip(centroid / (samplerate * 0.5), 0.0, 1.0))
         # Non-blocking put: drop if full (better than blocking audio callback)
         try:
-            feat_q.put_nowait((rms_raw, centroid))
+            feat_q.put_nowait((_scheduled_perf_time(time_info), rms_raw, centroid))
         except queue.Full:
             pass  # Drop sample if queue is full
 
@@ -1000,38 +1278,46 @@ def run(args) -> None:
             except queue.Full:
                 pass
 
-    try:
-        stream = sd.InputStream(
-            samplerate=samplerate,
-            channels=input_channels,
-            blocksize=hop,
-            dtype="float32",
-            callback=audio_cb,
-            device=args.device,
-            latency="low",
+    if audio_file_path:
+        stream = WavAudioInputStream(
+            audio_file_path,
+            hop,
+            audio_cb,
+            play_audio=bool(getattr(args, "play_audio_file", False)),
         )
-    except Exception as e:
-        raw_spec = normalize_audio_device_spec(getattr(args, "audio_device_spec", "") or args.device)
-        can_retry = (
-            raw_spec
-            and str(raw_spec).startswith("pa:")
-            and audio_resolution is not None
-            and allow_default_source_switch
-            and audio_resolution.get("strategy") != "set_default_source"
-        )
-        if not can_retry:
-            raise RuntimeError(f"failed to open audio input stream: {e}") from e
-        print(f"[audio] stream open failed, retrying fallback: {e}")
-        _resolve_input_device(prefer_default_source=True)
-        stream = sd.InputStream(
-            samplerate=samplerate,
-            channels=input_channels,
-            blocksize=hop,
-            dtype="float32",
-            callback=audio_cb,
-            device=args.device,
-            latency="low",
-        )
+    else:
+        try:
+            stream = sd.InputStream(
+                samplerate=samplerate,
+                channels=input_channels,
+                blocksize=hop,
+                dtype="float32",
+                callback=audio_cb,
+                device=args.device,
+                latency="low",
+            )
+        except Exception as e:
+            raw_spec = normalize_audio_device_spec(getattr(args, "audio_device_spec", "") or args.device)
+            can_retry = (
+                raw_spec
+                and str(raw_spec).startswith("pa:")
+                and audio_resolution is not None
+                and allow_default_source_switch
+                and audio_resolution.get("strategy") != "set_default_source"
+            )
+            if not can_retry:
+                raise RuntimeError(f"failed to open audio input stream: {e}") from e
+            print(f"[audio] stream open failed, retrying fallback: {e}")
+            _resolve_input_device(prefer_default_source=True)
+            stream = sd.InputStream(
+                samplerate=samplerate,
+                channels=input_channels,
+                blocksize=hop,
+                dtype="float32",
+                callback=audio_cb,
+                device=args.device,
+                latency="low",
+            )
 
     # ---- audio state ----
     beta = one_pole_beta(args.cutoff_hz, args.audio_hz)
@@ -1064,10 +1350,21 @@ def run(args) -> None:
     rendered = 0
 
     window_name = args.window_name
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(window_name, vid_prev.w, vid_prev.h)
+    preview_window_enabled = not bool(getattr(args, "no_preview_window", False))
+    if preview_window_enabled:
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, vid_prev.w, vid_prev.h)
     print("[info] Press 'q' to quit.")
     print("stream latency:", stream.latency)
+    render_writer = None
+    render_out = str(getattr(args, "render_out", "") or "").strip()
+    if render_out:
+        os.makedirs(os.path.dirname(os.path.abspath(render_out)) or ".", exist_ok=True)
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        render_writer = cv2.VideoWriter(render_out, fourcc, float(args.render_fps), (vid_prev.w, vid_prev.h))
+        if not render_writer.isOpened():
+            raise RuntimeError(f"failed to open render writer: {render_out}")
+        print(f"[render] writing preview video: {render_out}")
 
     def draw_one(dst_rgb: np.ndarray, frame_idx: int, track: MouthTrack | None, scale: float):
         nonlocal mouth_shape_now
@@ -1127,14 +1424,7 @@ def run(args) -> None:
                         except queue.Empty:
                             break
                         if sel in mouth_sets and sel != current_emotion:
-                            current_emotion = sel
-                            mouth = mouth_sets[current_emotion]
-                            print(f"[emotion] switched -> {current_emotion}")
-                            if bool(args.emotion_hud):
-                                try:
-                                    hud_q.put_nowait(format_emotion_hud_text(infer_label_from_set_name(current_emotion)))
-                                except Exception:
-                                    pass
+                            _switch_runtime_emotion(sel, source="button")
 
                 # ---- emotion AUTO updates ----
                 if emotion_auto_enabled and (emo_audio_q is not None) and (emo_analyzer is not None):
@@ -1181,22 +1471,25 @@ def run(args) -> None:
                                 )
 
                             if target_set in mouth_sets and target_set != current_emotion:
-                                current_emotion = target_set
-                                mouth = mouth_sets[current_emotion]
-                                print(f"[emotion-auto] switched -> {current_emotion} ({target_label}, conf={conf:.2f})")
-                                if bool(args.emotion_hud):
-                                    try:
-                                        hud_q.put_nowait(format_emotion_hud_text(target_label))
-                                    except Exception:
-                                        pass
+                                _switch_runtime_emotion(target_set, source=f"auto:{target_label}, conf={conf:.2f}")
 
                 # ---- audio updates ----
                 # Drain all available items from the queue (non-blocking)
+                pending_items: list[tuple[float, float, float]] = []
                 items: list[tuple[float, float]] = []
                 while True:
                     try:
-                        items.append(feat_q.get_nowait())
+                        due_t, rms_raw, cent = feat_q.get_nowait()
+                        if due_t <= now:
+                            items.append((rms_raw, cent))
+                        else:
+                            pending_items.append((due_t, rms_raw, cent))
                     except queue.Empty:
+                        break
+                for item in pending_items:
+                    try:
+                        feat_q.put_nowait(item)
+                    except queue.Full:
                         break
 
                 for rms_raw, cent in items:
@@ -1262,13 +1555,13 @@ def run(args) -> None:
                             if cm < U_TH:
                                 current_open_shape = "u"
                             elif cm > E_TH:
-                                current_open_shape = "e"
+                                current_open_shape = "wide" if env > min(1.0, OPEN_TH + 0.18) and "wide" in mouth else "e"
                             else:
                                 current_open_shape = "open"
                             last_vowel_change_t = t
-                        mouth_shape_now = current_open_shape
+                        mouth_shape_now = "wide" if env > min(1.0, OPEN_TH + 0.28) and "wide" in mouth else current_open_shape
                     elif mouth_level == "half":
-                        mouth_shape_now = "half"
+                        mouth_shape_now = "small" if env < max(OPEN_TH, HALF_TH + 0.12) and "small" in mouth else "half"
                     else:
                         mouth_shape_now = "closed"
 
@@ -1288,6 +1581,13 @@ def run(args) -> None:
                     except Exception:
                         hud_root = None
                         hud_lbl = None
+
+                if selector_root is not None:
+                    try:
+                        selector_root.update_idletasks()
+                        selector_root.update()
+                    except Exception:
+                        selector_root = None
 
                 # ---- preview ----
                 frp_base = vid_prev.get_frame(now).copy()
@@ -1391,7 +1691,9 @@ def run(args) -> None:
                                 print(f"[auto-color warn] failed to write result: {e}")
 
                 frp = apply_inspect_boost_3ch(frp, inspect_boost, color_order="RGB")
-                k = _show_preview_frame(window_name, frp)
+                if render_writer is not None:
+                    render_writer.write(cv2.cvtColor(frp, cv2.COLOR_RGB2BGR))
+                k = _show_preview_frame(window_name, frp) if preview_window_enabled else -1
                 if k == ord("q"):
                     break
                 if k == ord("v"):
@@ -1421,9 +1723,14 @@ def run(args) -> None:
                     fps = float(args.render_fps) / (now2 - last_stat)
                     last_stat = now2
                     print(f"[runtime] fps:{fps:.2f} mouth:{mouth_shape_now} frame:{vid_prev.frame_idx}")
+                if args.max_frames > 0 and rendered >= int(args.max_frames):
+                    print(f"[runtime] reached max frames: {rendered}")
+                    break
 
     finally:
         color_rebuilder.close()
+        if render_writer is not None:
+            render_writer.release()
         if cam is not None:
             cam.close()
         vid_prev.close()
@@ -1431,7 +1738,13 @@ def run(args) -> None:
             vid_full.close()
         if vid_full_auto is not None:
             vid_full_auto.close()
-        cv2.destroyAllWindows()
+        if selector_root is not None:
+            try:
+                selector_root.destroy()
+            except Exception:
+                pass
+        if preview_window_enabled:
+            cv2.destroyAllWindows()
         cleanup_audio_device_resolution(audio_resolution or {}, audio_apply_state)
 
 
@@ -1473,6 +1786,8 @@ def parse_args():
 
     ap.add_argument("--device", type=int, default=31, help="sounddevice input device index")
     ap.add_argument("--audio-device-spec", type=str, default="", help="audio device spec: sd:<index> / pa:<source>")
+    ap.add_argument("--audio-file", default="", help="WAV file input for finite/offline runtime verification")
+    ap.add_argument("--play-audio-file", action="store_true", help="play --audio-file from the same callback used for lipsync")
     ap.add_argument("--linux-allow-default-source-switch", action="store_true", help=argparse.SUPPRESS)
     ap.add_argument("--use-virtual-cam", action="store_true")
 
@@ -1491,6 +1806,8 @@ def parse_args():
 
     ap.add_argument("--emotion", default="", help="起動時に選択する感情フォルダ名（mouth_dir配下）。空なら自動選択")
     ap.add_argument("--no-emotion-gui", action="store_true", help="感情選択GUIを表示しない（CLI指定のみで切替）")
+    ap.add_argument("--emotion-video-dir", default="",
+                    help="感情名に対応する loop_<emotion>_mouthless.mp4 と mouth_track_<emotion>_calibrated.npz を切り替えるディレクトリ")
 
     ap.add_argument("--emotion-auto", action="store_true",
                     help="音声から感情を推定して、口パーツ（感情セット）を自動で切り替える")
@@ -1522,6 +1839,9 @@ def parse_args():
     ap.add_argument("--mouth-auto-result", default="", help=argparse.SUPPRESS)
 
     ap.add_argument("--window-name", default="LoopLipsync Runtime")
+    ap.add_argument("--max-frames", type=int, default=0, help=argparse.SUPPRESS)
+    ap.add_argument("--render-out", default="", help=argparse.SUPPRESS)
+    ap.add_argument("--no-preview-window", action="store_true", help=argparse.SUPPRESS)
 
     args = ap.parse_args()
 

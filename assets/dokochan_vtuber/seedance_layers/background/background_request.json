@@ -1,0 +1,9 @@
+{
+  "prompt": "Create a seamless 5 second looping VTuber streaming room BACKGROUND ONLY. Absolutely no character, no person, no face, no body, no silhouette. The background must clearly be a video, not a still image. Required visible motion: the left monitor shows an animated GPS/map interface with moving route dots, pulsing location pins, and faint scanning rings; the right wall hex lights slowly pulse in brightness and color; the glowing globe on the lower right visibly rotates with moving latitude/longitude lines; small desk LEDs breathe softly. Preserve the approved Dokochan room style: warm softly lit desk, left monitor, plants, right wall hex lights, small glowing globe. Locked camera, no zoom, no pan, no cuts, no scene transition, no text, no logo, no watermark. Loop requirement: first and final frames match closely while the internal monitor, lights, and globe animation cycles smoothly.",
+  "image_url": "<uploaded>",
+  "end_image_url": "<uploaded>",
+  "duration": "5",
+  "resolution": "720p",
+  "aspect_ratio": "16:9",
+  "generate_audio": false
+}

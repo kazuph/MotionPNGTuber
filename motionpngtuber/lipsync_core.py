@@ -599,9 +599,11 @@ def load_mouth_sprites(mouth_dir: str, full_w: int, full_h: int) -> dict[str, np
     required = {"open": "open.png"}
     optional = {
         "closed": "closed.png",
+        "small": "small.png",
         "half": "half.png",
         "u": "u.png",
         "e": "e.png",
+        "wide": "wide.png",
     }
 
     def crop_full_canvas(rgba: np.ndarray, key: str) -> np.ndarray:
@@ -617,7 +619,9 @@ def load_mouth_sprites(mouth_dir: str, full_w: int, full_h: int) -> dict[str, np
         if key == "open":
             return open_rgba
 
-        if key == "half":
+        if key == "small":
+            sx, sy = 0.90, 0.38
+        elif key == "half":
             sx, sy = 1.00, 0.65
         elif key == "closed":
             sx, sy = 1.00, 0.25
@@ -625,6 +629,8 @@ def load_mouth_sprites(mouth_dir: str, full_w: int, full_h: int) -> dict[str, np
             sx, sy = 0.88, 0.55
         elif key == "e":
             sx, sy = 1.08, 0.55
+        elif key == "wide":
+            sx, sy = 1.12, 0.72
         else:
             sx, sy = 1.00, 1.00
 
@@ -664,7 +670,7 @@ def load_mouth_sprites(mouth_dir: str, full_w: int, full_h: int) -> dict[str, np
         else:
             sprites[key] = variant_from_open(open_rgba, key)
 
-    for k in ["closed", "half", "open", "u", "e"]:
+    for k in ["closed", "small", "half", "open", "u", "e", "wide"]:
         if k not in sprites:
             sprites[k] = open_rgba
 

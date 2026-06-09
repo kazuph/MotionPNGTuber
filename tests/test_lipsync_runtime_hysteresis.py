@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+import tempfile
 import unittest
+import wave
+from pathlib import Path
 
+import numpy as np
 from loop_lipsync_runtime_patched_emotion_auto import (
     classify_mouth_level_with_hysteresis,
+    load_wav_mono_float32,
     resolve_emotion_auto_target,
 )
 
@@ -84,6 +89,27 @@ class EmotionAutoTargetResolutionTests(unittest.TestCase):
             min_conf=0.45,
         )
         self.assertEqual((label, target, reason), ("happy", "Happy", "label"))
+
+
+class WavAudioInputTests(unittest.TestCase):
+    def test_load_wav_mono_float32_mixes_stereo_pcm16(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "voice.wav"
+            left = np.array([0, 16384, -16384, 32767], dtype="<i2")
+            right = np.array([0, 0, 0, -32768], dtype="<i2")
+            stereo = np.stack([left, right], axis=1)
+            with wave.open(str(path), "wb") as wf:
+                wf.setnchannels(2)
+                wf.setsampwidth(2)
+                wf.setframerate(48000)
+                wf.writeframes(stereo.tobytes())
+
+            audio, samplerate = load_wav_mono_float32(str(path))
+
+        self.assertEqual(samplerate, 48000)
+        self.assertEqual(audio.dtype, np.float32)
+        self.assertEqual(audio.shape, (4,))
+        self.assertAlmostEqual(float(audio[1]), 0.25, places=4)
 
 
 if __name__ == "__main__":
