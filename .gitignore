@@ -210,6 +210,9 @@ __marimo__/
 # Dependencies (for Mac)
 deps/
 
+# SwiftPM local build outputs
+macos/**/.build/
+
 # Local app state
 .mouth_track_last_session.json
 
