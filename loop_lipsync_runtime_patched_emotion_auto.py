@@ -20,6 +20,7 @@ import datetime
 import json
 import os
 import platform
+import subprocess
 import sys
 import threading
 import time
@@ -746,114 +747,81 @@ def start_emotion_buttons_gui(
     tts_dir: str = "",
     title: str = "Mouth Emotion",
 ):
-    """Create a small main-thread Tk button panel for macOS-safe emotion switching."""
+    """Launch the Tk button panel as a helper process.
+
+    macOS Japanese IME can deadlock when Tk is pumped from OpenCV's render loop,
+    and Tk initialization is also fragile from a non-main thread.  Keeping the
+    panel in its own Python process isolates UI event handling from lipsync.
+    """
     if tk is None:
         print("[warn] tkinter is not available; emotion GUI is disabled.")
         return None
     if not emotions:
         return None
 
-    root = tk.Tk()
-    root.title(title)
-    frm = tk.Frame(root, padx=10, pady=10)
-    frm.pack(fill="both", expand=True)
+    control_dir = os.path.join(tempfile.gettempdir(), f"dokochan_panel_{os.getpid()}")
+    os.makedirs(control_dir, exist_ok=True)
+    event_path = os.path.join(control_dir, "events.jsonl")
+    open(event_path, "a", encoding="utf-8").close()
 
-    if platform.system() == "Windows":
-        font_bold = ("Meiryo", 12, "bold")
-        font_norm = ("Meiryo", 11)
-    else:
-        font_bold = None
-        font_norm = None
-
-    lbl_kwargs = {"font": font_bold} if font_bold else {}
-    btn_kwargs = {"font": font_norm} if font_norm else {}
+    helper = os.path.join(HERE, "tools", "dokochan_emotion_tts_panel.py")
+    cmd = [
+        sys.executable,
+        helper,
+        "--event-path",
+        event_path,
+        "--title",
+        title,
+        "--initial",
+        initial,
+        "--emotions",
+        ",".join(emotions),
+        "--tts-dir",
+        tts_dir or tempfile.gettempdir(),
+    ]
     if enable_tts and tts_q is not None:
-        tk.Label(frm, text="Input", **lbl_kwargs).pack(anchor="w")
-        mode_var = tk.StringVar(value="audio")
-        mode_frame = tk.Frame(frm)
-        mode_frame.pack(fill="x", pady=(0, 6))
-        tk.Radiobutton(mode_frame, text="macOS audio", variable=mode_var, value="audio", **btn_kwargs).pack(side="left")
-        tk.Radiobutton(mode_frame, text="Irodori TTS", variable=mode_var, value="tts", **btn_kwargs).pack(side="left")
-
-        tts_var = tk.StringVar()
-        tts_entry = tk.Entry(
-            frm,
-            textvariable=tts_var,
-            bg="white",
-            fg="black",
-            insertbackground="black",
-            highlightthickness=1,
-            highlightbackground="#aaaaaa",
-            **btn_kwargs,
-        )
-        tts_entry.pack(fill="x", pady=2)
-        status_var = tk.StringVar(value="")
-
-        def send_tts():
-            text = tts_var.get().strip()
-            if not text:
-                return
-            mode_var.set("tts")
-            status_var.set("生成中...")
-            tts_btn.configure(state="disabled")
-
-            def worker():
-                try:
-                    wav_path = synthesize_irodori_tts(text, tts_dir or tempfile.gettempdir())
-                    tts_q.put_nowait(wav_path)
-                    root.after(0, lambda: status_var.set("再生中"))
-                except Exception as e:
-                    root.after(0, lambda: status_var.set(f"TTS失敗: {e}"))
-                finally:
-                    root.after(0, lambda: tts_btn.configure(state="normal"))
-
-            threading.Thread(target=worker, name="irodori-tts", daemon=True).start()
-
-        tts_btn = tk.Button(frm, text="送信", command=send_tts, anchor="center", **btn_kwargs)
-        tts_btn.pack(fill="x", pady=2)
-        tk.Label(frm, textvariable=status_var, **btn_kwargs).pack(anchor="w")
-
-    tk.Label(frm, text="Emotion", **lbl_kwargs).pack(anchor="w")
-
-    def push_selection(v: str):
-        try:
-            selection_q.put_nowait(v)
-        except Exception:
-            pass
-
-    for emo in emotions:
-        btn = tk.Button(
-            frm,
-            text=f"{_emotion_button_label(emo)}  {emo}",
-            command=lambda v=emo: push_selection(v),
-            anchor="center",
-            **btn_kwargs,
-        )
-        btn.pack(fill="x", pady=2)
-
+        cmd.append("--enable-tts")
+    proc = subprocess.Popen(cmd)
+    push_selection = lambda v: selection_q.put_nowait(v)
     try:
-        root.attributes("-topmost", True)
-    except Exception:
-        pass
-    try:
-        root.update_idletasks()
-        sw = root.winfo_screenwidth()
-        sh = root.winfo_screenheight()
-        ww = max(160, root.winfo_reqwidth())
-        wh = max(140, root.winfo_reqheight())
-        root.geometry(f"{ww}x{wh}+{max(0, sw - ww - 24)}+{max(0, sh - wh - 80)}")
+        push_selection(initial)
     except Exception:
         pass
 
-    def _on_close():
-        try:
-            root.destroy()
-        except Exception:
-            pass
+    state = {"offset": 0, "stop": False}
 
-    root.protocol("WM_DELETE_WINDOW", _on_close)
-    push_selection(initial)
-    return root
+    def _poll_events():
+        while not state["stop"]:
+            try:
+                with open(event_path, "r", encoding="utf-8") as f:
+                    f.seek(state["offset"])
+                    for line in f:
+                        try:
+                            event = json.loads(line)
+                        except json.JSONDecodeError:
+                            continue
+                        if event.get("type") == "emotion":
+                            try:
+                                selection_q.put_nowait(str(event.get("value", "")))
+                            except Exception:
+                                pass
+                        elif event.get("type") == "tts" and tts_q is not None:
+                            wav_path = str(event.get("path", ""))
+                            if wav_path:
+                                try:
+                                    tts_q.put_nowait(wav_path)
+                                except Exception:
+                                    pass
+                    state["offset"] = f.tell()
+            except Exception:
+                pass
+            if proc.poll() is not None:
+                break
+            time.sleep(0.05)
+
+    th = threading.Thread(target=_poll_events, name="emotion-tts-panel-poll", daemon=True)
+    th.start()
+    return proc
 
 
 # ========= emotion auto / HUD =========
@@ -1762,13 +1730,6 @@ def run(args) -> None:
                         hud_root = None
                         hud_lbl = None
 
-                if selector_root is not None:
-                    try:
-                        selector_root.update_idletasks()
-                        selector_root.update()
-                    except Exception:
-                        selector_root = None
-
                 # ---- preview ----
                 frp_base = vid_prev.get_frame(now).copy()
                 frp = frp_base.copy()
@@ -1918,7 +1879,7 @@ def run(args) -> None:
             vid_full.close()
         if vid_full_auto is not None:
             vid_full_auto.close()
-        if selector_root is not None:
+        if selector_root is not None and hasattr(selector_root, "destroy"):
             try:
                 selector_root.destroy()
             except Exception:
