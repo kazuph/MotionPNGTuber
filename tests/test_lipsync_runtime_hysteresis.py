@@ -5,12 +5,14 @@ import unittest
 import wave
 from pathlib import Path
 
+import cv2
 import numpy as np
 from loop_lipsync_runtime_patched_emotion_auto import (
     classify_mouth_level_with_hysteresis,
     load_wav_mono_float32,
     resolve_emotion_auto_target,
 )
+from motionpngtuber.lipsync_core import BgVideo
 
 
 class MouthLevelHysteresisTests(unittest.TestCase):
@@ -110,6 +112,25 @@ class WavAudioInputTests(unittest.TestCase):
         self.assertEqual(audio.dtype, np.float32)
         self.assertEqual(audio.shape, (4,))
         self.assertAlmostEqual(float(audio[1]), 0.25, places=4)
+
+
+class BgVideoPhaseTests(unittest.TestCase):
+    def test_seek_to_phase_does_not_restart_from_first_frame(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "loop.mp4"
+            writer = cv2.VideoWriter(str(path), cv2.VideoWriter_fourcc(*"mp4v"), 10.0, (16, 16))
+            self.assertTrue(writer.isOpened())
+            for i in range(10):
+                frame = np.full((16, 16, 3), i * 20, dtype=np.uint8)
+                writer.write(frame)
+            writer.release()
+
+            video = BgVideo(str(path), 16, 16)
+            try:
+                video.seek_to_phase(0.5)
+                self.assertEqual(video.frame_idx, 5)
+            finally:
+                video.close()
 
 
 if __name__ == "__main__":

@@ -1167,8 +1167,12 @@ def run(args) -> None:
                     old_prev = vid_prev
                     old_full = vid_full
                     old_full_auto = vid_full_auto
+                    loop_phase = old_prev.loop_phase() if old_prev is not None else 0.0
                     vid_prev = BgVideo(video_path, prev_w, prev_h)
+                    vid_prev.seek_to_phase(loop_phase)
                     vid_full = BgVideo(video_path, full_w, full_h) if (args.use_virtual_cam and HAS_VCAM) else None
+                    if vid_full is not None:
+                        vid_full.seek_to_phase(loop_phase)
                     if old_prev is not vid_prev:
                         old_prev.close()
                     if old_full is not None and old_full is not vid_full:

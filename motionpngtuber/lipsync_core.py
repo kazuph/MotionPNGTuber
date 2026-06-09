@@ -566,6 +566,26 @@ class BgVideo:
         assert self._cached is not None
         return self._cached
 
+    def seek_to_phase(self, phase: float) -> None:
+        """Seek to the same loop phase without restarting at frame 0."""
+        if self.total_frames <= 0:
+            return
+        phase = float(phase) % 1.0
+        target = int(round(phase * self.total_frames)) % self.total_frames
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, target)
+        self.frame_idx = target - 1
+        self._acc = 0.0
+        self._last_t = time.perf_counter()
+        fr = self._read_one()
+        if fr is not None:
+            self._cached = fr
+
+    def loop_phase(self) -> float:
+        """Return current loop phase in [0, 1)."""
+        if self.total_frames <= 0 or self.frame_idx < 0:
+            return 0.0
+        return (float(self.frame_idx) + float(self._acc)) / float(self.total_frames)
+
     def reset(self) -> None:
         """タイミングとフレームインデックスをリセット（動画切替時用）"""
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
