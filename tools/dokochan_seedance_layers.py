@@ -401,6 +401,8 @@ def launch(args: argparse.Namespace) -> None:
         "--render-fps", "24",
         "--window-name", "Dokochan Seedance Layered Lipsync",
         "--no-emotion-hud",
+        "--irodori-tts-ui",
+        "--irodori-tts-dir", str(paths.root / "irodori"),
     ])
 
 

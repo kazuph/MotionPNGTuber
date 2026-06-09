@@ -271,7 +271,7 @@ final class DokochanRuntimeView: NSView {
         setupVideoView()
         setupMouthView()
         setupControls()
-        videoView.frame = bounds
+        layoutMediaViews()
         layoutControls()
         loadAssets()
         switchEmotion("joy", preservePhase: false)
@@ -294,13 +294,13 @@ final class DokochanRuntimeView: NSView {
         super.layout()
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        videoView.frame = bounds
+        layoutMediaViews()
         layoutControls()
         CATransaction.commit()
     }
 
     private func setupVideoView() {
-        videoView.imageScaling = .scaleProportionallyUpOrDown
+        videoView.imageScaling = .scaleAxesIndependently
         videoView.wantsLayer = true
         videoView.layer?.backgroundColor = NSColor.black.cgColor
         addSubview(videoView, positioned: .below, relativeTo: nil)
@@ -311,6 +311,17 @@ final class DokochanRuntimeView: NSView {
         mouthView.wantsLayer = true
         mouthView.layer?.masksToBounds = false
         addSubview(mouthView, positioned: .above, relativeTo: videoView)
+    }
+
+    private func layoutMediaViews() {
+        let rect: CGRect
+        if let track = tracks[activeEmotion] {
+            rect = fittedVideoRect(videoWidth: CGFloat(track.width), videoHeight: CGFloat(track.height))
+        } else {
+            rect = fittedVideoRect(videoWidth: 1280, videoHeight: 720)
+        }
+        videoView.frame = rect
+        mouthView.frame = rect
     }
 
     private func setupControls() {
@@ -516,7 +527,7 @@ final class DokochanRuntimeView: NSView {
         }
         mouthView.isHidden = false
         mouthView.layer?.setAffineTransform(.identity)
-        mouthView.frame = fittedVideoRect(videoWidth: CGFloat(track.width), videoHeight: CGFloat(track.height))
+        layoutMediaViews()
         mouthView.image = overlay
     }
 
@@ -581,30 +592,77 @@ final class DokochanRuntimeView: NSView {
     }
 }
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private var window: NSWindow?
+    private var windows: [NSWindow] = []
+    private var repoRoot: URL?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        let repoRoot = resolveRepoRoot()
-        let view = DokochanRuntimeView(repoRoot: repoRoot)
+        installMainMenu()
+        repoRoot = resolveRepoRoot()
+        let count = max(1, min(4, initialWindowCount()))
+        for index in 0..<count {
+            createWindow(offsetIndex: index)
+        }
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc private func newWindow(_ sender: Any?) {
+        createWindow(offsetIndex: windows.count)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    private func createWindow(offsetIndex: Int) {
+        let root = repoRoot ?? resolveRepoRoot()
+        let view = DokochanRuntimeView(repoRoot: root)
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 1280, height: 720),
+            contentRect: NSRect(x: 80 + offsetIndex * 32, y: 80 + offsetIndex * 32, width: 1280, height: 720),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
         )
-        window.title = "Dokochan Swift Runtime"
+        window.title = windows.isEmpty ? "Dokochan Swift Runtime" : "Dokochan Swift Runtime \(windows.count + 1)"
         window.contentView = view
-        window.center()
+        if windows.isEmpty {
+            window.center()
+        }
         window.level = .floating
         window.makeKeyAndOrderFront(nil)
         window.orderFrontRegardless()
-        self.window = window
-        NSApp.activate(ignoringOtherApps: true)
+        windows.append(window)
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         true
+    }
+
+    private func installMainMenu() {
+        let mainMenu = NSMenu()
+        let appItem = NSMenuItem()
+        mainMenu.addItem(appItem)
+        let appMenu = NSMenu()
+        appItem.submenu = appMenu
+        appMenu.addItem(withTitle: "Quit DokochanRuntime", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+
+        let fileItem = NSMenuItem()
+        mainMenu.addItem(fileItem)
+        let fileMenu = NSMenu(title: "File")
+        fileItem.submenu = fileMenu
+        let newItem = NSMenuItem(title: "New Window", action: #selector(newWindow(_:)), keyEquivalent: "n")
+        newItem.target = self
+        fileMenu.addItem(newItem)
+        NSApp.mainMenu = mainMenu
+    }
+
+    private func initialWindowCount() -> Int {
+        let args = CommandLine.arguments
+        if let idx = args.firstIndex(of: "--windows"), idx + 1 < args.count, let n = Int(args[idx + 1]) {
+            return n
+        }
+        if let env = ProcessInfo.processInfo.environment["DOKOCHAN_WINDOWS"], let n = Int(env) {
+            return n
+        }
+        return 1
     }
 
     private func resolveRepoRoot() -> URL {

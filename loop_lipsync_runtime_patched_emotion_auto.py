@@ -24,6 +24,8 @@ import sys
 import threading
 import time
 import queue
+import tempfile
+import urllib.request
 import wave
 from dataclasses import dataclass
 
@@ -365,7 +367,15 @@ class AsyncMouthColorRebuilder:
 class WavAudioInputStream:
     """Feed a WAV file through the same callback path as sounddevice.InputStream."""
 
-    def __init__(self, wav_path: str, blocksize: int, callback, *, play_audio: bool = False) -> None:
+    def __init__(
+        self,
+        wav_path: str,
+        blocksize: int,
+        callback,
+        *,
+        play_audio: bool = False,
+        target_samplerate: int | None = None,
+    ) -> None:
         self.wav_path = wav_path
         self.blocksize = max(1, int(blocksize))
         self.callback = callback
@@ -376,6 +386,9 @@ class WavAudioInputStream:
         self._stream = None
         self._pos = 0
         self.audio, self.samplerate = load_wav_mono_float32(wav_path)
+        if target_samplerate and int(target_samplerate) > 0 and int(target_samplerate) != int(self.samplerate):
+            self.audio = resample_linear_float32(self.audio, int(self.samplerate), int(target_samplerate))
+            self.samplerate = int(target_samplerate)
 
     def __enter__(self):
         self._stop.clear()
@@ -457,6 +470,91 @@ def load_wav_mono_float32(path: str) -> tuple[np.ndarray, int]:
     if channels > 1:
         data = data.reshape(-1, channels).mean(axis=1)
     return data.astype(np.float32, copy=False), samplerate
+
+
+def resample_linear_float32(audio: np.ndarray, src_sr: int, dst_sr: int) -> np.ndarray:
+    if src_sr <= 0 or dst_sr <= 0 or src_sr == dst_sr or audio.size == 0:
+        return audio.astype(np.float32, copy=False)
+    src_n = int(audio.shape[0])
+    dst_n = max(1, int(round(src_n * float(dst_sr) / float(src_sr))))
+    src_x = np.arange(src_n, dtype=np.float64)
+    dst_x = np.linspace(0, max(0, src_n - 1), dst_n, dtype=np.float64)
+    return np.interp(dst_x, src_x, audio.astype(np.float32)).astype(np.float32)
+
+
+class SwitchableAudioInputStream:
+    """Runtime-switchable input stream; TTS WAV uses the same callback path as mic input."""
+
+    def __init__(self, initial_stream, blocksize: int, callback, samplerate: int) -> None:
+        self._lock = threading.RLock()
+        self._stream = initial_stream
+        self.blocksize = max(1, int(blocksize))
+        self.callback = callback
+        self.samplerate = int(samplerate)
+        self.latency = float(getattr(initial_stream, "latency", 0.0) or 0.0)
+        self._entered = False
+
+    def __enter__(self):
+        with self._lock:
+            if not self._entered:
+                self._stream.__enter__() if hasattr(self._stream, "__enter__") else self._stream.start()
+                self.latency = float(getattr(self._stream, "latency", 0.0) or 0.0)
+                self._entered = True
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        with self._lock:
+            self._close_current()
+            self._entered = False
+
+    def _close_current(self) -> None:
+        try:
+            if hasattr(self._stream, "__exit__"):
+                self._stream.__exit__(None, None, None)
+            else:
+                self._stream.stop()
+                self._stream.close()
+        except Exception as e:
+            print(f"[audio warn] failed to close stream: {e}")
+
+    def switch_to_wav(self, wav_path: str, *, play_audio: bool = True) -> None:
+        next_stream = WavAudioInputStream(
+            wav_path,
+            self.blocksize,
+            self.callback,
+            play_audio=play_audio,
+            target_samplerate=self.samplerate,
+        )
+        with self._lock:
+            next_stream.__enter__()
+            self._close_current()
+            self._stream = next_stream
+            self.latency = float(getattr(next_stream, "latency", 0.0) or 0.0)
+        print(f"[audio] switched to TTS WAV: {wav_path}")
+
+
+def synthesize_irodori_tts(text: str, out_dir: str) -> str:
+    url = os.environ.get("IRODORI_TTS_URL", "http://100.80.152.112:8088/api/tts/v1/tts")
+    voice = os.environ.get("IRODORI_VOICE_LOCK", "5f34b71233d8450895d15e5d70318aa8")
+    body = json.dumps({"text": text, "voice_lock_id": voice}, ensure_ascii=False).encode("utf-8")
+    req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
+    os.makedirs(out_dir, exist_ok=True)
+    fd, out_path = tempfile.mkstemp(prefix="irodori_", suffix=".wav", dir=out_dir)
+    os.close(fd)
+    try:
+        with urllib.request.urlopen(req, timeout=120) as res:
+            data = res.read()
+        with open(out_path, "wb") as f:
+            f.write(data)
+        _probe, sr = load_wav_mono_float32(out_path)
+        print(f"[tts] generated Irodori WAV: {out_path} sr:{sr} bytes:{len(data)}")
+        return out_path
+    except Exception:
+        try:
+            os.unlink(out_path)
+        except OSError:
+            pass
+        raise
 
 
 def _apply_runtime_mouth_color_update(
@@ -642,6 +740,10 @@ def start_emotion_buttons_gui(
     emotions: list[str],
     initial: str,
     selection_q: "queue.Queue[str]",
+    tts_q: "queue.Queue[str] | None" = None,
+    *,
+    enable_tts: bool = False,
+    tts_dir: str = "",
     title: str = "Mouth Emotion",
 ):
     """Create a small main-thread Tk button panel for macOS-safe emotion switching."""
@@ -664,6 +766,53 @@ def start_emotion_buttons_gui(
         font_norm = None
 
     lbl_kwargs = {"font": font_bold} if font_bold else {}
+    btn_kwargs = {"font": font_norm} if font_norm else {}
+    if enable_tts and tts_q is not None:
+        tk.Label(frm, text="Input", **lbl_kwargs).pack(anchor="w")
+        mode_var = tk.StringVar(value="audio")
+        mode_frame = tk.Frame(frm)
+        mode_frame.pack(fill="x", pady=(0, 6))
+        tk.Radiobutton(mode_frame, text="macOS audio", variable=mode_var, value="audio", **btn_kwargs).pack(side="left")
+        tk.Radiobutton(mode_frame, text="Irodori TTS", variable=mode_var, value="tts", **btn_kwargs).pack(side="left")
+
+        tts_var = tk.StringVar()
+        tts_entry = tk.Entry(
+            frm,
+            textvariable=tts_var,
+            bg="white",
+            fg="black",
+            insertbackground="black",
+            highlightthickness=1,
+            highlightbackground="#aaaaaa",
+            **btn_kwargs,
+        )
+        tts_entry.pack(fill="x", pady=2)
+        status_var = tk.StringVar(value="")
+
+        def send_tts():
+            text = tts_var.get().strip()
+            if not text:
+                return
+            mode_var.set("tts")
+            status_var.set("生成中...")
+            tts_btn.configure(state="disabled")
+
+            def worker():
+                try:
+                    wav_path = synthesize_irodori_tts(text, tts_dir or tempfile.gettempdir())
+                    tts_q.put_nowait(wav_path)
+                    root.after(0, lambda: status_var.set("再生中"))
+                except Exception as e:
+                    root.after(0, lambda: status_var.set(f"TTS失敗: {e}"))
+                finally:
+                    root.after(0, lambda: tts_btn.configure(state="normal"))
+
+            threading.Thread(target=worker, name="irodori-tts", daemon=True).start()
+
+        tts_btn = tk.Button(frm, text="送信", command=send_tts, anchor="center", **btn_kwargs)
+        tts_btn.pack(fill="x", pady=2)
+        tk.Label(frm, textvariable=status_var, **btn_kwargs).pack(anchor="w")
+
     tk.Label(frm, text="Emotion", **lbl_kwargs).pack(anchor="w")
 
     def push_selection(v: str):
@@ -672,7 +821,6 @@ def start_emotion_buttons_gui(
         except Exception:
             pass
 
-    btn_kwargs = {"font": font_norm} if font_norm else {}
     for emo in emotions:
         btn = tk.Button(
             frm,
@@ -1096,6 +1244,7 @@ def run(args) -> None:
             print(f"[{tag} warn] sprite rebuild exceeded 200ms; async apply prevented render blocking.")
 
     emotion_q: queue.Queue[str] = queue.Queue()
+    tts_q: queue.Queue[str] = queue.Queue()
     selector_root = None
 
     # Optional HUD (emoji + label). Default ON, can be disabled by --no-emotion-hud
@@ -1116,7 +1265,15 @@ def run(args) -> None:
 
     # Manual selector GUI is allowed only when emotion-auto is OFF
     if (not args.no_emotion_gui) and (not emotion_auto_enabled):
-        selector_root = start_emotion_buttons_gui(emotions, current_emotion, emotion_q, title="Dokochan Emotion")
+        selector_root = start_emotion_buttons_gui(
+            emotions,
+            current_emotion,
+            emotion_q,
+            tts_q,
+            enable_tts=bool(getattr(args, "irodori_tts_ui", False)),
+            tts_dir=str(getattr(args, "irodori_tts_dir", "") or os.path.join(HERE, ".runtime_logs", "irodori")),
+            title="Dokochan Emotion",
+        )
 
     # Emotion auto analyzer
     emo_audio_q: queue.Queue[np.ndarray] | None = None
@@ -1323,6 +1480,8 @@ def run(args) -> None:
                 latency="low",
             )
 
+    stream = SwitchableAudioInputStream(stream, hop, audio_cb, samplerate)
+
     # ---- audio state ----
     beta = one_pole_beta(args.cutoff_hz, args.audio_hz)
     noise = 1e-4
@@ -1429,6 +1588,23 @@ def run(args) -> None:
                             break
                         if sel in mouth_sets and sel != current_emotion:
                             _switch_runtime_emotion(sel, source="button")
+
+                if not tts_q.empty():
+                    while True:
+                        try:
+                            wav_path = tts_q.get_nowait()
+                        except queue.Empty:
+                            break
+                        try:
+                            stream.switch_to_wav(wav_path, play_audio=True)
+                            noise = 1e-4
+                            peak = 1e-3
+                            env_lp = 0.0
+                            env_hist.clear()
+                            cent_hist.clear()
+                            rms_smooth_q.clear()
+                        except Exception as e:
+                            print(f"[tts warn] failed to switch TTS WAV input: {e}")
 
                 # ---- emotion AUTO updates ----
                 if emotion_auto_enabled and (emo_audio_q is not None) and (emo_analyzer is not None):
@@ -1792,6 +1968,8 @@ def parse_args():
     ap.add_argument("--audio-device-spec", type=str, default="", help="audio device spec: sd:<index> / pa:<source>")
     ap.add_argument("--audio-file", default="", help="WAV file input for finite/offline runtime verification")
     ap.add_argument("--play-audio-file", action="store_true", help="play --audio-file from the same callback used for lipsync")
+    ap.add_argument("--irodori-tts-ui", action="store_true", help="show Irodori TTS input in the emotion control window")
+    ap.add_argument("--irodori-tts-dir", default="", help="directory for generated Irodori TTS WAV files")
     ap.add_argument("--linux-allow-default-source-switch", action="store_true", help=argparse.SUPPRESS)
     ap.add_argument("--use-virtual-cam", action="store_true")
 
