@@ -386,8 +386,8 @@ class WavAudioInputStream:
         self._thread: threading.Thread | None = None
         self._stream = None
         self._stream_lock = threading.RLock()
-        self._play_proc: subprocess.Popen | None = None
         self._pos = 0
+        self._analysis_pos = 0
         playback_audio, playback_samplerate = load_wav_mono_float32(wav_path)
         self.playback_audio = playback_audio
         self.playback_samplerate = int(playback_samplerate)
@@ -400,49 +400,36 @@ class WavAudioInputStream:
     def __enter__(self):
         self._stop.clear()
         if self.play_audio:
-            if sys.platform == "darwin":
-                self._play_proc = subprocess.Popen(
-                    ["afplay", self.wav_path],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
+            try:
+                default_output = sd.default.device[1] if isinstance(sd.default.device, (list, tuple)) else sd.default.device
+                output_info = sd.query_devices(default_output)
+                output_samplerate = int(round(float(output_info.get("default_samplerate") or self.playback_samplerate)))
+            except Exception:
+                output_samplerate = self.playback_samplerate
+            if output_samplerate > 0 and output_samplerate != self.playback_samplerate:
+                self.playback_audio = resample_linear_float32(
+                    self.playback_audio,
+                    self.playback_samplerate,
+                    output_samplerate,
                 )
-            else:
-                try:
-                    default_output = sd.default.device[1] if isinstance(sd.default.device, (list, tuple)) else sd.default.device
-                    output_info = sd.query_devices(default_output)
-                    output_samplerate = int(round(float(output_info.get("default_samplerate") or self.playback_samplerate)))
-                except Exception:
-                    output_samplerate = self.playback_samplerate
-                if output_samplerate > 0 and output_samplerate != self.playback_samplerate:
-                    self.playback_audio = resample_linear_float32(
-                        self.playback_audio,
-                        self.playback_samplerate,
-                        output_samplerate,
-                    )
-                    self.playback_samplerate = output_samplerate
-                self._stream = sd.OutputStream(
-                    samplerate=self.playback_samplerate,
-                    channels=1,
-                    blocksize=max(1, int(round(self.blocksize * float(self.playback_samplerate) / float(max(1, self.samplerate))))),
-                    dtype="float32",
-                    callback=self._output_cb,
-                    latency="low",
-                )
-                self._stream.start()
-                self.latency = float(getattr(self._stream, "latency", 0.0) or 0.0)
-        self._thread = threading.Thread(target=self._run, name="wav-audio-input", daemon=True)
-        self._thread.start()
+                self.playback_samplerate = output_samplerate
+            self._stream = sd.OutputStream(
+                samplerate=self.playback_samplerate,
+                channels=1,
+                blocksize=max(1, int(round(self.blocksize * float(self.playback_samplerate) / float(max(1, self.samplerate))))),
+                dtype="float32",
+                callback=self._output_cb,
+                latency="low",
+            )
+            self._stream.start()
+            self.latency = float(getattr(self._stream, "latency", 0.0) or 0.0)
+        else:
+            self._thread = threading.Thread(target=self._run, name="wav-audio-input", daemon=True)
+            self._thread.start()
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
         self._stop.set()
-        if self._play_proc is not None:
-            try:
-                if self._play_proc.poll() is None:
-                    self._play_proc.terminate()
-            except Exception:
-                pass
-            self._play_proc = None
         self._close_output_stream()
         if self._thread is not None:
             self._thread.join(timeout=1.0)
@@ -493,6 +480,18 @@ class WavAudioInputStream:
         chunk_2d = chunk.reshape(-1, 1)
         outdata[:] = chunk_2d
         self._pos += int(frames)
+        analysis_frames = max(1, int(round(int(frames) * float(self.samplerate) / float(max(1, self.playback_samplerate)))))
+        analysis_chunk, analysis_done = self._read_chunk_once(self.audio, self._analysis_pos, analysis_frames)
+        if analysis_frames < self.blocksize:
+            analysis_chunk = np.pad(analysis_chunk, (0, self.blocksize - analysis_frames))
+        elif analysis_frames > self.blocksize:
+            analysis_chunk = resample_linear_float32(analysis_chunk, self.samplerate, int(round(self.samplerate * self.blocksize / analysis_frames)))
+            if int(analysis_chunk.shape[0]) < self.blocksize:
+                analysis_chunk = np.pad(analysis_chunk, (0, self.blocksize - int(analysis_chunk.shape[0])))
+            else:
+                analysis_chunk = analysis_chunk[:self.blocksize]
+        self.callback(analysis_chunk.reshape(-1, 1), self.blocksize, time_info, status)
+        self._analysis_pos += analysis_frames
         if done:
             self._stop.set()
 
@@ -545,10 +544,11 @@ def resample_linear_float32(audio: np.ndarray, src_sr: int, dst_sr: int) -> np.n
 class SwitchableAudioInputStream:
     """Keep mic input alive and overlay TTS WAV through the same callback path."""
 
-    def __init__(self, initial_stream, blocksize: int, callback, samplerate: int) -> None:
+    def __init__(self, initial_stream, blocksize: int, callback, samplerate: int, reopen_current=None) -> None:
         self._lock = threading.RLock()
         self._stream = initial_stream
         self._tts_stream: WavAudioInputStream | None = None
+        self._reopen_current = reopen_current
         self.blocksize = max(1, int(blocksize))
         self.callback = callback
         self.samplerate = int(samplerate)
@@ -570,6 +570,8 @@ class SwitchableAudioInputStream:
             self._entered = False
 
     def _close_current(self) -> None:
+        if self._stream is None:
+            return
         try:
             if hasattr(self._stream, "__exit__"):
                 self._stream.__exit__(None, None, None)
@@ -578,6 +580,18 @@ class SwitchableAudioInputStream:
                 self._stream.close()
         except Exception as e:
             print(f"[audio warn] failed to close stream: {e}")
+        self._stream = None
+
+    def _open_current(self) -> None:
+        if self._stream is not None or self._reopen_current is None:
+            return
+        try:
+            self._stream = self._reopen_current()
+            self._stream.__enter__() if hasattr(self._stream, "__enter__") else self._stream.start()
+            self.latency = float(getattr(self._stream, "latency", 0.0) or 0.0)
+            print("[audio] restored live input stream")
+        except Exception as e:
+            print(f"[audio warn] failed to restore live input stream: {e}")
 
     def _close_tts(self) -> None:
         if self._tts_stream is None:
@@ -598,13 +612,26 @@ class SwitchableAudioInputStream:
         )
         with self._lock:
             self._close_tts()
+            restore_live_input = bool(play_audio and self._reopen_current is not None)
+            if restore_live_input:
+                self._close_current()
             next_stream.__enter__()
             self._tts_stream = next_stream
             self.latency = max(
-                float(getattr(self._stream, "latency", 0.0) or 0.0),
+                float(getattr(self._stream, "latency", 0.0) or 0.0) if self._stream is not None else 0.0,
                 float(getattr(next_stream, "latency", 0.0) or 0.0),
             )
-        print(f"[audio] started TTS WAV overlay: {wav_path}")
+        if restore_live_input:
+            threading.Thread(target=self._restore_after_tts, args=(next_stream,), name="restore-live-input", daemon=True).start()
+        print(f"[audio] started TTS WAV synced playback: {wav_path}")
+
+    def _restore_after_tts(self, tts_stream: WavAudioInputStream) -> None:
+        while not tts_stream._stop.is_set():
+            time.sleep(0.02)
+        with self._lock:
+            if self._tts_stream is tts_stream:
+                self._close_tts()
+                self._open_current()
 
 
 def synthesize_irodori_tts(text: str, out_dir: str) -> str:
@@ -1499,6 +1526,18 @@ def run(args) -> None:
     def tts_audio_cb(indata, frames, time_info, status):
         audio_cb_common(indata, frames, time_info, status)
 
+    def create_live_input_stream():
+        return sd.InputStream(
+            samplerate=samplerate,
+            channels=input_channels,
+            blocksize=hop,
+            dtype="float32",
+            callback=mic_audio_cb,
+            device=args.device,
+            latency="low",
+        )
+
+    reopen_current_stream = None
     if audio_file_path:
         stream = WavAudioInputStream(
             audio_file_path,
@@ -1508,15 +1547,8 @@ def run(args) -> None:
         )
     else:
         try:
-            stream = sd.InputStream(
-                samplerate=samplerate,
-                channels=input_channels,
-                blocksize=hop,
-                dtype="float32",
-                callback=mic_audio_cb,
-                device=args.device,
-                latency="low",
-            )
+            stream = create_live_input_stream()
+            reopen_current_stream = create_live_input_stream
         except Exception as e:
             raw_spec = normalize_audio_device_spec(getattr(args, "audio_device_spec", "") or args.device)
             can_retry = (
@@ -1530,17 +1562,10 @@ def run(args) -> None:
                 raise RuntimeError(f"failed to open audio input stream: {e}") from e
             print(f"[audio] stream open failed, retrying fallback: {e}")
             _resolve_input_device(prefer_default_source=True)
-            stream = sd.InputStream(
-                samplerate=samplerate,
-                channels=input_channels,
-                blocksize=hop,
-                dtype="float32",
-                callback=mic_audio_cb,
-                device=args.device,
-                latency="low",
-            )
+            stream = create_live_input_stream()
+            reopen_current_stream = create_live_input_stream
 
-    stream = SwitchableAudioInputStream(stream, hop, tts_audio_cb, samplerate)
+    stream = SwitchableAudioInputStream(stream, hop, tts_audio_cb, samplerate, reopen_current=reopen_current_stream)
 
     # ---- audio state ----
     beta = one_pole_beta(args.cutoff_hz, args.audio_hz)
