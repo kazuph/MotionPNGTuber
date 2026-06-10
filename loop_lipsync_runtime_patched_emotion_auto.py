@@ -91,6 +91,7 @@ HERE = os.path.abspath(os.path.dirname(__file__))
 LAST_SESSION_FILE = os.path.join(HERE, ".mouth_track_last_session.json")
 __VERSION__ = "v7-shared-core"
 MOUTH_LEVEL_DEADBAND = 0.04
+JOY_MOUTH_SHAPE_STABLE_SEC = 0.08
 
 
 try:
@@ -138,6 +139,53 @@ def classify_mouth_level_with_hysteresis(
     if env < open_th - deadband:
         return "half" if env >= half_th else "closed"
     return "open"
+
+
+def soften_mouth_shape_for_emotion(
+    emotion: str,
+    shape: str,
+    env: float,
+    half_th: float,
+    open_th: float,
+    mouth_set: dict[str, np.ndarray] | None = None,
+) -> str:
+    """Joy smiles look jumpy when vowel variants flash between very different silhouettes."""
+    if str(emotion).lower() != "joy":
+        return shape
+
+    available = mouth_set or {}
+    if shape in {"wide", "e", "u"}:
+        if env >= min(1.0, open_th + 0.24) and "open" in available:
+            return "open"
+        if "half" in available:
+            return "half"
+        return "small" if "small" in available else shape
+    if shape == "open" and env < min(1.0, open_th + 0.16):
+        return "half" if "half" in available else shape
+    if shape == "half" and env < max(open_th, half_th + 0.12):
+        return "small" if "small" in available else shape
+    return shape
+
+
+def stabilize_mouth_shape(
+    candidate: str,
+    current: str,
+    pending: str | None,
+    pending_since: float,
+    now: float,
+    stable_sec: float,
+) -> tuple[str, str | None, float]:
+    if candidate == current:
+        return current, None, now
+    if current == "closed" or candidate == "closed":
+        return candidate, None, now
+    if stable_sec <= 0:
+        return candidate, None, now
+    if candidate != pending:
+        return current, candidate, now
+    if now - pending_since >= stable_sec:
+        return candidate, None, now
+    return current, pending, pending_since
 
 
 def _show_preview_frame(window_name: str, frame_rgb: np.ndarray) -> int:
@@ -1584,6 +1632,8 @@ def run(args) -> None:
     last_vowel_change_t = -999.0
     e_prev2, e_prev1 = 0.0, 0.0
     mouth_shape_now = "closed"
+    pending_mouth_shape: str | None = None
+    pending_mouth_shape_since = 0.0
     prev_mouth_level = "closed"
 
     # ---- virtual cam ----
@@ -1840,11 +1890,29 @@ def run(args) -> None:
                             else:
                                 current_open_shape = "open"
                             last_vowel_change_t = t
-                        mouth_shape_now = "wide" if env > min(1.0, OPEN_TH + 0.28) and "wide" in mouth else current_open_shape
+                        mouth_shape_candidate = "wide" if env > min(1.0, OPEN_TH + 0.28) and "wide" in mouth else current_open_shape
                     elif mouth_level == "half":
-                        mouth_shape_now = "small" if env < max(OPEN_TH, HALF_TH + 0.12) and "small" in mouth else "half"
+                        mouth_shape_candidate = "small" if env < max(OPEN_TH, HALF_TH + 0.12) and "small" in mouth else "half"
                     else:
-                        mouth_shape_now = "closed"
+                        mouth_shape_candidate = "closed"
+
+                    mouth_shape_candidate = soften_mouth_shape_for_emotion(
+                        current_emotion,
+                        mouth_shape_candidate,
+                        env,
+                        HALF_TH,
+                        OPEN_TH,
+                        mouth,
+                    )
+                    stable_sec = float(args.joy_mouth_shape_stable_sec) if current_emotion.lower() == "joy" else 0.0
+                    mouth_shape_now, pending_mouth_shape, pending_mouth_shape_since = stabilize_mouth_shape(
+                        mouth_shape_candidate,
+                        mouth_shape_now,
+                        pending_mouth_shape,
+                        pending_mouth_shape_since,
+                        t,
+                        stable_sec,
+                    )
 
                     e_prev2, e_prev1 = e_prev1, env
 
@@ -2113,6 +2181,7 @@ def parse_args():
     ap.add_argument("--mouth-live-control", default="", help=argparse.SUPPRESS)
     ap.add_argument("--mouth-auto-request", default="", help=argparse.SUPPRESS)
     ap.add_argument("--mouth-auto-result", default="", help=argparse.SUPPRESS)
+    ap.add_argument("--joy-mouth-shape-stable-sec", type=float, default=JOY_MOUTH_SHAPE_STABLE_SEC, help=argparse.SUPPRESS)
 
     ap.add_argument("--window-name", default="LoopLipsync Runtime")
     ap.add_argument("--max-frames", type=int, default=0, help=argparse.SUPPRESS)

@@ -11,6 +11,8 @@ from loop_lipsync_runtime_patched_emotion_auto import (
     classify_mouth_level_with_hysteresis,
     load_wav_mono_float32,
     resolve_emotion_auto_target,
+    soften_mouth_shape_for_emotion,
+    stabilize_mouth_shape,
 )
 from motionpngtuber.lipsync_core import BgVideo
 
@@ -45,6 +47,40 @@ class MouthLevelHysteresisTests(unittest.TestCase):
             classify_mouth_level_with_hysteresis(0.47, 0.30, 0.52, "open"),
             "half",
         )
+
+    def test_joy_softens_large_vowel_shapes_until_strong_open(self):
+        mouth = {"small": object(), "half": object(), "open": object()}
+        self.assertEqual(
+            soften_mouth_shape_for_emotion("joy", "u", 0.60, 0.30, 0.52, mouth),
+            "half",
+        )
+        self.assertEqual(
+            soften_mouth_shape_for_emotion("joy", "wide", 0.78, 0.30, 0.52, mouth),
+            "open",
+        )
+
+    def test_non_joy_keeps_original_shape(self):
+        self.assertEqual(
+            soften_mouth_shape_for_emotion("surprise", "u", 0.60, 0.30, 0.52, {}),
+            "u",
+        )
+
+    def test_stabilize_mouth_shape_keeps_speech_edges_immediate(self):
+        shape, pending, since = stabilize_mouth_shape("half", "closed", None, 0.0, 1.0, 0.08)
+        self.assertEqual((shape, pending, since), ("half", None, 1.0))
+
+        shape, pending, since = stabilize_mouth_shape("closed", "half", None, 0.0, 1.0, 0.08)
+        self.assertEqual((shape, pending, since), ("closed", None, 1.0))
+
+    def test_stabilize_mouth_shape_waits_only_between_speaking_shapes(self):
+        shape, pending, since = stabilize_mouth_shape("half", "small", None, 0.0, 1.0, 0.08)
+        self.assertEqual((shape, pending, since), ("small", "half", 1.0))
+
+        shape, pending, since = stabilize_mouth_shape("half", shape, pending, since, 1.04, 0.08)
+        self.assertEqual((shape, pending, since), ("small", "half", 1.0))
+
+        shape, pending, since = stabilize_mouth_shape("half", shape, pending, since, 1.09, 0.08)
+        self.assertEqual((shape, pending, since), ("half", None, 1.09))
 
 
 class EmotionAutoTargetResolutionTests(unittest.TestCase):

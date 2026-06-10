@@ -129,6 +129,36 @@ def main() -> int:
     btn_kwargs = {"font": font_norm} if font_norm else {}
     ui_q: "queue.Queue[tuple[str, str]]" = queue.Queue()
 
+    def fit_window_to_content() -> None:
+        try:
+            root.update_idletasks()
+            sw = root.winfo_screenwidth()
+            sh = root.winfo_screenheight()
+            ww = min(max(520, root.winfo_reqwidth()), max(520, sw - 48))
+            wh = min(max(220, root.winfo_reqheight()), max(320, sh - 120))
+            root.geometry(f"{ww}x{wh}+{max(0, sw - ww - 24)}+{max(0, sh - wh - 80)}")
+        except Exception:
+            pass
+
+    tk.Label(frm, text="Emotion", **lbl_kwargs).pack(anchor="w")
+
+    def push_emotion(value: str) -> None:
+        append_event(args.event_path, {"type": "emotion", "value": value})
+
+    emotion_frame = tk.Frame(frm)
+    emotion_frame.pack(fill="x", pady=(0, 10))
+    for idx, emo in enumerate(emotions):
+        btn = tk.Button(
+            emotion_frame,
+            text=f"{_emotion_button_label(emo)}  {emo}",
+            command=lambda v=emo: push_emotion(v),
+            anchor="center",
+            **btn_kwargs,
+        )
+        btn.grid(row=idx // 2, column=idx % 2, sticky="ew", padx=2, pady=2)
+    emotion_frame.grid_columnconfigure(0, weight=1)
+    emotion_frame.grid_columnconfigure(1, weight=1)
+
     if args.enable_tts:
         tk.Label(frm, text="Input", **lbl_kwargs).pack(anchor="w")
         mode_var = tk.StringVar(value="audio")
@@ -184,10 +214,16 @@ def main() -> int:
                     kind, value = ui_q.get_nowait()
                     if kind == "status":
                         status_var.set(value)
+                        if value:
+                            tts_status_label.pack(fill="x", pady=(2, 0))
+                        else:
+                            tts_status_label.pack_forget()
+                        root.after_idle(fit_window_to_content)
                     elif kind == "send_state":
                         tts_btn.configure(state=value)
                     elif kind == "gemma_status":
                         gemma_status_var.set(value)
+                        root.after_idle(fit_window_to_content)
                     elif kind == "gemma_state":
                         gemma_btn.configure(state=value)
             except queue.Empty:
@@ -200,6 +236,8 @@ def main() -> int:
                 return
             set_input_mode("tts")
             status_var.set("生成中...")
+            tts_status_label.pack(fill="x", pady=(2, 0))
+            root.after_idle(fit_window_to_content)
             tts_btn.configure(state="disabled")
 
             def worker() -> None:
@@ -215,10 +253,15 @@ def main() -> int:
             threading.Thread(target=worker, name="irodori-tts", daemon=True).start()
 
         tts_btn = tk.Button(frm, text="送信", command=send_tts, anchor="center", **btn_kwargs)
-        tts_btn.pack(fill="x", pady=2)
-        tk.Label(frm, textvariable=status_var, **btn_kwargs).pack(anchor="w")
+        tts_btn.pack(fill="x", pady=(2, 2))
+        tts_status_label = tk.Label(
+            frm,
+            textvariable=status_var,
+            anchor="w",
+            justify="left",
+            **btn_kwargs,
+        )
 
-        tk.Label(frm, text="Gemma Voice", **lbl_kwargs).pack(anchor="w", pady=(8, 0))
         gemma_status_var = tk.StringVar(value="録音ボタンで会話")
         recording = {
             "active": False,
@@ -275,7 +318,7 @@ def main() -> int:
                 reply = ask_gemma_with_audio(wav_path)
                 if not reply:
                     raise RuntimeError("Gemmaの返答が空です")
-                ui_q.put_nowait(("gemma_status", reply[:80]))
+                ui_q.put_nowait(("gemma_status", reply))
                 wav_reply = synthesize_irodori_tts(reply, args.tts_dir)
                 append_event(args.event_path, {"type": "tts", "path": wav_reply})
             except Exception as e:
@@ -303,24 +346,24 @@ def main() -> int:
                 gemma_btn.configure(text="録音開始")
 
         gemma_btn = tk.Button(frm, text="録音開始", command=toggle_gemma_recording, anchor="center", **btn_kwargs)
-        gemma_btn.pack(fill="x", pady=2)
-        tk.Label(frm, textvariable=gemma_status_var, wraplength=260, justify="left", **btn_kwargs).pack(anchor="w")
-        poll_ui_q()
-
-    tk.Label(frm, text="Emotion", **lbl_kwargs).pack(anchor="w")
-
-    def push_emotion(value: str) -> None:
-        append_event(args.event_path, {"type": "emotion", "value": value})
-
-    for emo in emotions:
-        btn = tk.Button(
+        gemma_btn.pack(fill="x", pady=(2, 2))
+        gemma_status_label = tk.Label(
             frm,
-            text=f"{_emotion_button_label(emo)}  {emo}",
-            command=lambda v=emo: push_emotion(v),
-            anchor="center",
+            textvariable=gemma_status_var,
+            anchor="w",
+            justify="left",
+            wraplength=520,
             **btn_kwargs,
         )
-        btn.pack(fill="x", pady=2)
+        gemma_status_label.pack(fill="x", pady=(2, 0))
+
+        def update_status_wrap(event) -> None:
+            width = max(240, int(event.width) - 20)
+            tts_status_label.configure(wraplength=width)
+            gemma_status_label.configure(wraplength=width)
+
+        frm.bind("<Configure>", update_status_wrap)
+        poll_ui_q()
 
     try:
         root.attributes("-topmost", True)
@@ -328,11 +371,7 @@ def main() -> int:
         pass
     try:
         root.update_idletasks()
-        sw = root.winfo_screenwidth()
-        sh = root.winfo_screenheight()
-        ww = max(160, root.winfo_reqwidth())
-        wh = max(140, root.winfo_reqheight())
-        root.geometry(f"{ww}x{wh}+{max(0, sw - ww - 24)}+{max(0, sh - wh - 80)}")
+        fit_window_to_content()
     except Exception:
         pass
 
