@@ -37,8 +37,11 @@ GEMMA_MODEL = os.environ.get(
     "gemma-4-12b-it-qat-grapev-mtp-q4-n3-vision-ctx200k-q8_0-q8_0",
 )
 GEMMA_SYSTEM_PROMPT = (
-    "あなたはどこちゃんです。短く自然な日本語で返答してください。"
-    "おばあちゃんを探している少し心配性だけど前向きな女の子として話してください。"
+    "あなたはVTuberとして配信中のどこちゃんです。短く自然な日本語で返答してください。"
+    "相手は家族やおじいちゃんではなく、配信を見ている視聴者さんです。"
+    "どこちゃんはおばあちゃんを探す孫娘という属性を持っていますが、今夜はもうおばあちゃんを見つけて一緒に家へ帰ってきています。"
+    "おばあちゃんは今は寝ているので、現在進行形で心配しすぎたり、探し続けているとは言わないでください。"
+    "おばあちゃんはいつもすぐいなくなっちゃう、という軽い持ちネタとして扱ってください。"
     "返答は音声で読み上げるので、記号や箇条書きは避けてください。"
 )
 
@@ -131,9 +134,35 @@ def main() -> int:
         mode_var = tk.StringVar(value="audio")
         mode_frame = tk.Frame(frm)
         mode_frame.pack(fill="x", pady=(0, 6))
-        tk.Radiobutton(mode_frame, text="macOS audio", variable=mode_var, value="audio", **btn_kwargs).pack(side="left")
-        tk.Radiobutton(mode_frame, text="Irodori TTS", variable=mode_var, value="tts", **btn_kwargs).pack(side="left")
-        tk.Radiobutton(mode_frame, text="Gemma Voice", variable=mode_var, value="gemma", **btn_kwargs).pack(side="left")
+
+        def set_input_mode(value: str) -> None:
+            mode_var.set(value)
+            append_event(args.event_path, {"type": "input_mode", "value": value})
+
+        tk.Radiobutton(
+            mode_frame,
+            text="macOS audio",
+            variable=mode_var,
+            value="audio",
+            command=lambda: set_input_mode("audio"),
+            **btn_kwargs,
+        ).pack(side="left")
+        tk.Radiobutton(
+            mode_frame,
+            text="Irodori TTS",
+            variable=mode_var,
+            value="tts",
+            command=lambda: set_input_mode("tts"),
+            **btn_kwargs,
+        ).pack(side="left")
+        tk.Radiobutton(
+            mode_frame,
+            text="Gemma Voice",
+            variable=mode_var,
+            value="gemma",
+            command=lambda: set_input_mode("gemma"),
+            **btn_kwargs,
+        ).pack(side="left")
 
         tts_var = tk.StringVar()
         tts_entry = tk.Entry(
@@ -169,7 +198,7 @@ def main() -> int:
             text = tts_var.get().strip()
             if not text:
                 return
-            mode_var.set("tts")
+            set_input_mode("tts")
             status_var.set("生成中...")
             tts_btn.configure(state="disabled")
 
@@ -257,7 +286,7 @@ def main() -> int:
         def toggle_gemma_recording() -> None:
             if not recording["active"]:
                 try:
-                    mode_var.set("gemma")
+                    set_input_mode("gemma")
                     start_recording()
                     gemma_status_var.set("録音中...")
                     gemma_btn.configure(text="停止して会話")
@@ -308,6 +337,8 @@ def main() -> int:
         pass
 
     push_emotion(args.initial)
+    if args.enable_tts:
+        append_event(args.event_path, {"type": "input_mode", "value": mode_var.get()})
     root.mainloop()
     return 0
 

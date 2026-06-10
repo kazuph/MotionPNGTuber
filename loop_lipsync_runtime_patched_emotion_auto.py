@@ -815,6 +815,7 @@ def start_emotion_buttons_gui(
     initial: str,
     selection_q: "queue.Queue[str]",
     tts_q: "queue.Queue[str] | None" = None,
+    mode_q: "queue.Queue[str] | None" = None,
     *,
     enable_tts: bool = False,
     tts_dir: str = "",
@@ -883,6 +884,13 @@ def start_emotion_buttons_gui(
                             if wav_path:
                                 try:
                                     tts_q.put_nowait(wav_path)
+                                except Exception:
+                                    pass
+                        elif event.get("type") == "input_mode" and mode_q is not None:
+                            mode = str(event.get("value", ""))
+                            if mode:
+                                try:
+                                    mode_q.put_nowait(mode)
                                 except Exception:
                                     pass
                     state["offset"] = f.tell()
@@ -1286,6 +1294,8 @@ def run(args) -> None:
 
     emotion_q: queue.Queue[str] = queue.Queue()
     tts_q: queue.Queue[str] = queue.Queue()
+    input_mode_q: queue.Queue[str] = queue.Queue()
+    input_mode = "audio"
     selector_root = None
 
     # Optional HUD (emoji + label). Default ON, can be disabled by --no-emotion-hud
@@ -1311,6 +1321,7 @@ def run(args) -> None:
             current_emotion,
             emotion_q,
             tts_q,
+            input_mode_q,
             enable_tts=bool(getattr(args, "irodori_tts_ui", False)),
             tts_dir=str(getattr(args, "irodori_tts_dir", "") or os.path.join(HERE, ".runtime_logs", "irodori")),
             title="Dokochan Emotion",
@@ -1454,7 +1465,7 @@ def run(args) -> None:
             return time.perf_counter()
         return time.perf_counter() + max(0.0, output - current)
 
-    def audio_cb(indata, frames, time_info, status):
+    def audio_cb_common(indata, frames, time_info, status):
         x = indata.astype(np.float32)
         if x.ndim == 2:
             x = x.mean(axis=1)
@@ -1480,11 +1491,19 @@ def run(args) -> None:
             except queue.Full:
                 pass
 
+    def mic_audio_cb(indata, frames, time_info, status):
+        if input_mode != "audio":
+            return
+        audio_cb_common(indata, frames, time_info, status)
+
+    def tts_audio_cb(indata, frames, time_info, status):
+        audio_cb_common(indata, frames, time_info, status)
+
     if audio_file_path:
         stream = WavAudioInputStream(
             audio_file_path,
             hop,
-            audio_cb,
+            tts_audio_cb,
             play_audio=bool(getattr(args, "play_audio_file", False)),
         )
     else:
@@ -1494,7 +1513,7 @@ def run(args) -> None:
                 channels=input_channels,
                 blocksize=hop,
                 dtype="float32",
-                callback=audio_cb,
+                callback=mic_audio_cb,
                 device=args.device,
                 latency="low",
             )
@@ -1516,12 +1535,12 @@ def run(args) -> None:
                 channels=input_channels,
                 blocksize=hop,
                 dtype="float32",
-                callback=audio_cb,
+                callback=mic_audio_cb,
                 device=args.device,
                 latency="low",
             )
 
-    stream = SwitchableAudioInputStream(stream, hop, audio_cb, samplerate)
+    stream = SwitchableAudioInputStream(stream, hop, tts_audio_cb, samplerate)
 
     # ---- audio state ----
     beta = one_pole_beta(args.cutoff_hz, args.audio_hz)
@@ -1629,6 +1648,22 @@ def run(args) -> None:
                             break
                         if sel in mouth_sets and sel != current_emotion:
                             _switch_runtime_emotion(sel, source="button")
+
+                if not input_mode_q.empty():
+                    while True:
+                        try:
+                            next_mode = input_mode_q.get_nowait()
+                        except queue.Empty:
+                            break
+                        if next_mode in {"audio", "tts", "gemma"} and next_mode != input_mode:
+                            input_mode = next_mode
+                            noise = 1e-4
+                            peak = 1e-3
+                            env_lp = 0.0
+                            env_hist.clear()
+                            cent_hist.clear()
+                            rms_smooth_q.clear()
+                            print(f"[input] mode -> {input_mode}")
 
                 if not tts_q.empty():
                     while True:
