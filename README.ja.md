@@ -72,12 +72,16 @@ uv sync
 uv run python mouth_track_gui.py
 
 # 3. サンプルで試す
-#    動画: assets/asmr_tomari/asmr_loop.mp4
-#    mouth: assets/asmr_tomari/mouth
+#    公式サンプル:
+#      動画: assets/asmr_tomari/asmr_loop.mp4
+#      mouth: assets/asmr_tomari/mouth
+#    追加サンプル:
+#      動画: assets/dokochan_keyboard/loop_mouthless_h264.mp4
+#      mouth: assets/dokochan_keyboard/mouth
 #    → ① 解析→キャリブ → ② 口消し動画生成 → ③ ライブ実行
 ```
 
-> 📝 古い記事では `assets01` / `assets03` が使われていることがありますが、現在の `main` のサンプルは `assets/asmr_tomari/` です。
+> 📝 古い記事では `assets01` / `assets03` が使われていることがありますが、現在の `main` の公式サンプルは `assets/asmr_tomari/` です。このリポジトリでは追加サンプルとして `assets/dokochan_keyboard/` も同梱しています。
 
 ---
 

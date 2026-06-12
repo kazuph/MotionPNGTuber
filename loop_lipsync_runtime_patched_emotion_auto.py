@@ -683,8 +683,25 @@ class SwitchableAudioInputStream:
 
 
 def synthesize_irodori_tts(text: str, out_dir: str) -> str:
+    voice = os.environ.get("IRODORI_VOICE_LOCK", "").strip()
+    if not voice:
+        lab_url = os.environ.get("DOKOCHAN_VOICE_LAB_URL", "http://127.0.0.1:8766").rstrip("/")
+        body = json.dumps({"text": text}, ensure_ascii=False).encode("utf-8")
+        req = urllib.request.Request(
+            f"{lab_url}/api/synthesize-selected",
+            data=body,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=300) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+        wav_path = str(payload.get("wav_path") or "")
+        if not wav_path or not os.path.isfile(wav_path):
+            raise RuntimeError("Dokochan Voice Lab did not return a usable WAV path.")
+        print(f"[tts] generated repo-local Irodori WAV: {wav_path}")
+        return wav_path
+
     url = os.environ.get("IRODORI_TTS_URL", "http://100.80.152.112:8088/api/tts/v1/tts")
-    voice = os.environ.get("IRODORI_VOICE_LOCK", "5f34b71233d8450895d15e5d70318aa8")
     body = json.dumps({"text": text, "voice_lock_id": voice}, ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
     os.makedirs(out_dir, exist_ok=True)
@@ -856,10 +873,6 @@ def start_emotion_selector_gui(
             push_selection(initial)
 
             try:
-                root.attributes("-topmost", True)
-            except Exception:
-                pass
-            try:
                 root.update_idletasks()
                 sw = root.winfo_screenwidth()
                 sh = root.winfo_screenheight()
@@ -1009,12 +1022,6 @@ def start_emotion_hud_gui(
 
     root = tk.Tk()
     root.title(title)
-
-    # 確実に見える方を優先（枠なしは環境によって見えないことがあるので今回はやめる）
-    try:
-        root.attributes("-topmost", True)
-    except Exception:
-        pass
 
     # Emoji-friendly font
     if platform.system() == "Windows":

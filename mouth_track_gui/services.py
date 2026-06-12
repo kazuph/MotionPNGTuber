@@ -133,6 +133,22 @@ def best_open_sprite(mouth_dir: str) -> str:
 EMOTION_DIR_NAMES = {"default", "neutral", "happy", "angry", "sad", "excited"}
 
 
+def _find_child_dir_case_insensitive(parent: str, wanted: str) -> str:
+    """Return an existing child directory preserving on-disk casing."""
+    wanted_low = wanted.lower()
+    try:
+        for name in os.listdir(parent):
+            p = os.path.join(parent, name)
+            if name.lower() == wanted_low and os.path.isdir(p):
+                return p
+    except Exception:
+        pass
+    cand = os.path.join(parent, wanted)
+    if os.path.isdir(cand):
+        return cand
+    return ""
+
+
 def is_emotion_level_mouth_root(mouth_root: str) -> bool:
     """Heuristic: mouth_root is already a character directory (no character layer),
     if it contains open.png directly OR contains multiple emotion-named subfolders."""
@@ -204,8 +220,8 @@ def best_open_sprite_for_character(mouth_root: str, character: str) -> str:
     # 2) preferred emotion folders
     preferred = ["Default", "default", "neutral", "Neutral", "Normal", "normal"]
     for em in preferred:
-        d = os.path.join(base, em)
-        if not os.path.isdir(d):
+        d = _find_child_dir_case_insensitive(base, em)
+        if not d:
             continue
         p = os.path.join(d, "open.png")
         if os.path.isfile(p):

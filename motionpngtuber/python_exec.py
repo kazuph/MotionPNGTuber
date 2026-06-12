@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import ntpath
 import sys
 
 
@@ -19,10 +20,12 @@ def resolve_python_subprocess_executable(executable: str | None = None) -> str:
     if os.name != "nt":
         return exe
 
-    if os.path.basename(exe).lower() != "pythonw.exe":
+    pathmod = ntpath if os.name == "nt" else os.path
+
+    if pathmod.basename(exe).lower() != "pythonw.exe":
         return exe
 
-    candidate = os.path.join(os.path.dirname(exe), "python.exe")
+    candidate = pathmod.join(pathmod.dirname(exe), "python.exe")
     if os.path.isfile(candidate):
         return candidate
     return exe

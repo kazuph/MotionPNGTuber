@@ -366,10 +366,6 @@ def main() -> int:
         poll_ui_q()
 
     try:
-        root.attributes("-topmost", True)
-    except Exception:
-        pass
-    try:
         root.update_idletasks()
         fit_window_to_content()
     except Exception:

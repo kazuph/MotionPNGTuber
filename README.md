@@ -72,12 +72,16 @@ uv sync
 uv run python mouth_track_gui.py
 
 # 3. Try with samples
-#    Video: assets/asmr_tomari/asmr_loop.mp4
-#    Mouth: assets/asmr_tomari/mouth
+#    Official sample:
+#      Video: assets/asmr_tomari/asmr_loop.mp4
+#      Mouth: assets/asmr_tomari/mouth
+#    Extra sample:
+#      Video: assets/dokochan_keyboard/loop_mouthless_h264.mp4
+#      Mouth: assets/dokochan_keyboard/mouth
 #    → (1) Analyze → Calibrate → (2) Generate mouthless video → (3) Live run
 ```
 
-> Note: some older articles still refer to `assets01` / `assets03`. The current sample set on `main` is `assets/asmr_tomari/`.
+> Note: some older articles still refer to `assets01` / `assets03`. The current official sample set on `main` is `assets/asmr_tomari/`. This repository also includes `assets/dokochan_keyboard/` as an extra sample.
 
 ---
 

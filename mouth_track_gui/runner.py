@@ -191,10 +191,14 @@ class CommandRunner:
                 if self._active_proc is p:
                     self._active_proc = None
 
+        stop_requested = drain.stop_requested or self._force_requested.is_set()
+        was_stopped = drain.was_stopped or (
+            stop_requested and rc not in (0, None)
+        )
         return RunResult(
             returncode=rc,
-            was_stopped=drain.was_stopped,
-            stop_requested=drain.stop_requested,
+            was_stopped=was_stopped,
+            stop_requested=stop_requested,
         )
 
     # ------------------------------------------------------------------
