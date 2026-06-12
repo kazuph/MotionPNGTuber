@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dokochan Voice Lab — irodori voice atlas</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-dot"></span>
+          <h1>Dokochan Voice Lab</h1>
+          <span class="brand-sub">irodori VoiceDesign — 声質アトラス</span>
+        </div>
+        <div class="top-status">
+          <span id="modelStatus" class="status-chip">loading…</span>
+          <span id="atlasStatus" class="status-chip">atlas: …</span>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <section class="map-side">
+          <div class="map-toolbar">
+            <div class="seg" role="group" aria-label="Projection">
+              <button id="projUmap" class="seg-btn is-active" type="button">UMAP</button>
+              <button id="projPca" class="seg-btn" type="button">PCA</button>
+            </div>
+            <label class="color-by">
+              <span>色</span>
+              <select id="colorBy">
+                <option value="f0_med">声の高さ (F0)</option>
+                <option value="centroid">明るさ (スペクトル重心)</option>
+                <option value="rms">声量</option>
+                <option value="f0_iqr">抑揚の幅</option>
+                <option value="gender">性別タグ</option>
+              </select>
+            </label>
+            <input id="searchBox" type="search" placeholder="caption・名前で検索" />
+            <button id="swipeBtn" class="swipe-btn" type="button" title="スワイプで声を発掘">🔥 スワイプ発掘</button>
+            <button id="favFilter" class="fav-filter" type="button" title="お気に入りのみ表示">♥</button>
+            <button id="resetView" class="reset-view" type="button" title="ズームをリセット">⤢ 100%</button>
+            <div id="legend" class="legend"></div>
+          </div>
+
+          <div class="map-frame">
+            <canvas id="mapCanvas"></canvas>
+            <div id="tooltip" class="tooltip" hidden></div>
+            <div id="axisX" class="axis-hint axis-hint-x"></div>
+            <div id="axisY" class="axis-hint axis-hint-y"></div>
+            <div id="mapEmpty" class="map-empty" hidden>
+              <p>アトラス未構築です。</p>
+              <code>tools/voice_atlas_builder.py generate → project</code>
+            </div>
+          </div>
+
+          <div class="map-foot">
+            <div id="validationChips" class="validation"></div>
+            <p class="map-help">●クリック＝即試聴 / 空白クリック＝近傍ブレンド合成（◆） / ピンチ・ホイール＝ズーム / ドラッグ＝移動 / ダブルクリック＝リセット</p>
+          </div>
+
+          <details class="map-about">
+            <summary>ⓘ このマップは何か / 何でないか</summary>
+            <div class="map-about-body">
+              <p><b>これは:</b> irodori TTSに多様なキャプション×seedで実際に生成させた音声群を、話者照合モデル（ECAPA-TDNN）が測った「同じ人の声か」の類似度で並べた地図。<b>点はすべて実在する生成音声</b>で、クリックすると即試聴できる。近くの点ほど似た声で、クラスタはモデルが得意とする「声の型」を表す。</p>
+              <p><b>これではない:</b> 連続的に声が変化する魔法の空間ではない。点のない空白はモデルがその中間の声をあまり持たないことを示し、空白クリックは「近傍k=4点のキャプション隠れ状態の距離重みブレンド」による<b>近似合成</b>（◆）。同じ声の塊（同一キャプションのseed違い）の中では声はほとんど変わらない — それはマップが声質を忠実に保存している証拠でもある。</p>
+              <p><b>★類似度の読み方（ECAPA話者照合スコア）:</b> 0.6以上=ほぼ同一人物級 / 0.4〜0.6=同系統の声 / 0.4未満=別系統。マスターの正解音源とアトラス声の最高値は ユナ≈0.61・聡子≈0.50 — つまり「captionからユナにそこそこ近い声は出せるが、聡子級は出せない」がこのモデルの正直な限界。</p>
+              <p><b>軸の意味:</b> UMAP/PCAの軸は学習されたものなので絶対的な意味はないが、音響特徴とのSpearman相関（マップ四隅に表示）で事後的に解釈できる。</p>
+            </div>
+          </details>
+        </section>
+
+        <aside class="inspector">
+          <div class="card selected-card">
+            <div class="card-head">
+              <h2 id="selTitle">声を選んでね</h2>
+              <span id="selSeed" class="mono"></span>
+            </div>
+            <p id="selCaption" class="caption-text">マップ上の点をクリックすると、その声のキャプション・特徴・音声がここに表示されます。</p>
+            <div class="note-row" id="noteRow" hidden>
+              <button id="noteFav" type="button" title="お気に入りに追加/解除">♡</button>
+              <input id="noteName" type="text" placeholder="この声に名前をつける（マップに表示）" maxlength="60" />
+            </div>
+            <div id="selTags" class="tag-row"></div>
+            <div id="selBlend" class="blend-list"></div>
+            <div id="featureBars" class="feature-bars"></div>
+            <audio id="player" controls preload="none"></audio>
+          </div>
+
+          <div class="card caption-card">
+            <h3>captionから新しい声を作る（シードガチャ）</h3>
+            <textarea id="captionText" rows="2" maxlength="300" placeholder="例: 日本語を話すハスキーな大人の女性の声。深夜ラジオのDJのように落ち着いていて、少し気だるげ。"></textarea>
+            <div class="synth-actions">
+              <button id="gachaBtn" class="primary" type="button">🎲 ガチャ生成</button>
+              <button id="rerollBtn" type="button" disabled>♻ 同じseedで別テキスト</button>
+            </div>
+            <p id="gachaMeta" class="synth-meta">同じcaptionでもseedで声が変わるよ（実測: 8seedで約3声種）。気に入ったら♥と名前を付けてね。</p>
+          </div>
+
+          <div class="card synth-card">
+            <h3>この声で任意テキストを合成</h3>
+            <div class="preset-row" id="presetRow">
+              <button type="button" class="preset-chip" data-text="リスナーのみんな、こんにちは！これから配信始めるね。">🎙 配信オープニング</button>
+              <button type="button" class="preset-chip" data-text="もー！君はいつも無理しすぎだよ。そんなんだと何も達成できないよ？">😤 お説教</button>
+              <button type="button" class="preset-chip" data-text="私だけは、君のことを、ずっと信じているからね。">🌙 シリアス</button>
+            </div>
+            <textarea id="synthText" rows="3" maxlength="220">リスナーのみんな、こんにちは！これから配信始めるね。</textarea>
+            <div class="synth-actions">
+              <button id="synthBtn" class="primary" type="button">合成して再生</button>
+              <button id="useBtn" type="button" disabled>⭐ 既定ボイスに設定</button>
+            </div>
+            <p id="synthMeta" class="synth-meta"></p>
+          </div>
+
+          <div class="card collection-card">
+            <h3>♥ コレクション（保存した声）</h3>
+            <div id="collectionList" class="history-list"></div>
+          </div>
+
+          <div class="card history-card">
+            <h3>最近の合成</h3>
+            <div id="historyList" class="history-list"></div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <div id="swipeOverlay" class="swipe-overlay" hidden>
+      <div class="swipe-head">
+        <div class="swipe-head-top">
+          <strong>🔥 スワイプ発掘</strong>
+          <span id="swipeCount" class="swipe-count"></span>
+          <button id="swipeClose" type="button" class="swipe-close">✕ 閉じる</button>
+        </div>
+        <div class="swipe-head-controls">
+          <select id="swipeGender" class="swipe-pill" title="音響分類器（ECAPA）で実際の音を縛る">
+            <option value="female">♀ 女声のみ</option>
+            <option value="male">♂ 男声のみ</option>
+            <option value="all">🌈 すべて</option>
+          </select>
+          <select id="swipeTheme" class="swipe-pill" title="captionテーマを切り替える"></select>
+          <select id="swipeEngine" class="swipe-pill" title="生成エンジン。モデルが違えば声の母集団も別物">
+            <option value="irodori">🍙 irodori</option>
+            <option value="qwen3">🐉 Qwen3</option>
+          </select>
+          <select id="swipeBreath" class="swipe-pill" title="息感（吐息っぽさ）。以降の生成に即反映">
+            <option value="normal">😮‍💨 おまかせ</option>
+            <option value="more">😮‍💨 多め</option>
+            <option value="max">😮‍💨 MAX</option>
+            <option value="less">😮‍💨 控えめ</option>
+          </select>
+          <label class="toggle-chip" title="年配の声もデッキに混ぜる"><input type="checkbox" id="swipeElder" /><span>👵 年配</span></label>
+          <label class="toggle-chip" title="新しい声を自動生成してデッキに補充"><input type="checkbox" id="swipeGacha" /><span>🎲 自動補充</span></label>
+        </div>
+      </div>
+      <div class="swipe-stage">
+        <div id="swipeEntry" class="swipe-entry" hidden>
+          <p class="swipe-entry-title">どんな声を探す？</p>
+          <p class="swipe-entry-sub">テーマに沿った広いcaptionをその場で生成しながらスワイプするよ（音響分類器で性別保証）</p>
+          <div class="swipe-entry-row">
+            <span class="swipe-entry-label">性別</span>
+            <div class="swipe-entry-btns small" id="entryGender">
+              <button type="button" data-gender="female">♀ 女声</button>
+              <button type="button" data-gender="male">♂ 男声</button>
+              <button type="button" data-gender="all">🌈 すべて</button>
+            </div>
+          </div>
+          <div class="swipe-entry-row">
+            <span class="swipe-entry-label">エンジン</span>
+            <div class="swipe-entry-btns small" id="entryEngine">
+              <button type="button" data-engine="irodori">🍙 irodori</button>
+              <button type="button" data-engine="qwen3">🐉 Qwen3 1.7B</button>
+            </div>
+          </div>
+          <div class="swipe-entry-row">
+            <span class="swipe-entry-label">テーマ</span>
+            <div class="swipe-entry-themes" id="entryThemes"></div>
+          </div>
+          <button type="button" id="entryStart" class="swipe-entry-start">▶ 発掘スタート</button>
+        </div>
+        <div id="swipeCardNext" class="swipe-card is-under" hidden></div>
+        <div id="swipeCard" class="swipe-card" hidden></div>
+        <div id="swipeEmpty" class="swipe-empty" hidden>
+          <p>デッキを聴き切ったよ！🎉</p>
+          <p class="swipe-empty-sub">「🎲 自動補充」をONにすると無限に発掘できるよ</p>
+        </div>
+      </div>
+      <div class="swipe-actions">
+        <button id="swipeNope" type="button" class="swipe-act nope" title="スキップ (←)">✕</button>
+        <button id="swipeReplay" type="button" class="swipe-act replay" title="もう一度再生 (Space)">↻</button>
+        <button id="swipeLike" type="button" class="swipe-act like" title="お気に入り (→)">♥</button>
+      </div>
+      <input id="swipeName" type="text" class="swipe-name" placeholder="名前（任意・♥のとき一緒に保存）" maxlength="60" />
+      <p class="swipe-hint">← スキップ ／ → お気に入り ／ Space 再生 ／ ドラッグでもOK</p>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

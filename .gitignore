@@ -138,6 +138,7 @@ celerybeat.pid
 # Environments
 .env
 .envrc
+local/voice_lab_outputs/
 .venv
 env/
 venv/
