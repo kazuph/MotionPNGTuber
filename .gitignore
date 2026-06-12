@@ -233,3 +233,25 @@ review_mouth_track_gui.md
 
 # Legacy requirements (managed by pyproject.toml + uv.lock)
 requirements.txt
+
+# --- Dokochan pipelines: generated/debug artifacts (sources stay tracked) ---
+assets/_references/
+assets/dokochan_keyboard/debug/
+assets/dokochan_keyboard/irodori/
+assets/dokochan_keyboard/loop_contact_first_mid_last.jpg
+assets/dokochan_keyboard/mouth_contact.png
+assets/dokochan_keyboard/runtime_*
+assets/dokochan_keyboard/seedance_*
+assets/dokochan_keyboard/source.png
+assets/dokochan_keyboard/source_*.jpg
+assets/dokochan_keyboard/test_voice_*
+assets/dokochan_vtuber/debug_track_*
+assets/dokochan_vtuber/emotion_loop*
+assets/dokochan_vtuber/generated_mouth_sheet/legacy_root_mouth/
+assets/dokochan_vtuber/loop_*.mp4
+assets/dokochan_vtuber/mouth_emotion_*
+assets/dokochan_vtuber/mouth_track_*
+assets/dokochan_vtuber/seedance_*_request.json
+assets/dokochan_vtuber/seedance_*_result.json
+assets/dokochan_vtuber/seedance_layers/
+*.bak.*
