@@ -13,6 +13,12 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROWS = COLS = 5
 MIN_SAFE_MARGIN_PX = 8
+MAX_VISIBLE_BACKGROUND_RESIDUE_PIXELS = 24
+MAX_CELL_CENTER_DELTA_RATIO = 0.085
+MIN_CELL_AREA_RATIO_TO_REFERENCE = 0.78
+MAX_CELL_AREA_RATIO_TO_REFERENCE = 1.24
+MIN_CELL_DIMENSION_RATIO_TO_REFERENCE = 0.78
+MAX_CELL_DIMENSION_RATIO_TO_REFERENCE = 1.24
 
 
 def purple_background_candidate(rgb: np.ndarray) -> np.ndarray:
@@ -206,6 +212,7 @@ def keep_largest_component_per_cell(alpha_image: Image.Image) -> Image.Image:
 def verify(alpha_image: Image.Image) -> dict[str, object]:
     arr = np.array(alpha_image.convert("RGBA"))
     alpha = arr[..., 3] > 16
+    visible_background_residue = purple_background_candidate(arr[..., :3]) & alpha
     h, w = alpha.shape
     cw = w / COLS
     ch = h / ROWS
@@ -216,6 +223,8 @@ def verify(alpha_image: Image.Image) -> dict[str, object]:
     heights: list[int] = []
     margin_violations = 0
     margin_violation_cells: list[dict[str, object]] = []
+    residue_violations = 0
+    residue_violation_cells: list[dict[str, object]] = []
     empty = 0
     for row in range(ROWS):
         for col in range(COLS):
@@ -224,12 +233,27 @@ def verify(alpha_image: Image.Image) -> dict[str, object]:
             y0 = int(round(row * ch))
             y1 = int(round((row + 1) * ch))
             cell = alpha[y0:y1, x0:x1]
+            residue_pixels = int(visible_background_residue[y0:y1, x0:x1].sum())
             bx0, by0, bx1, by1, area = bbox(cell)
             if area == 0:
                 empty += 1
-                cell_data = {"row": row, "col": col, "empty": True}
+                cell_data = {
+                    "row": row,
+                    "col": col,
+                    "empty": True,
+                    "visible_background_residue_pixels": residue_pixels,
+                }
                 cells.append(cell_data)
                 continue
+            if residue_pixels > MAX_VISIBLE_BACKGROUND_RESIDUE_PIXELS:
+                residue_violations += 1
+                residue_violation_cells.append(
+                    {
+                        "row": row,
+                        "col": col,
+                        "visible_background_residue_pixels": residue_pixels,
+                    }
+                )
             width = bx1 - bx0
             height = by1 - by0
             cx = bx0 + width / 2
@@ -264,6 +288,7 @@ def verify(alpha_image: Image.Image) -> dict[str, object]:
                     "center_ratio": [round(cx / (x1 - x0), 4), round(cy / (y1 - y0), 4)],
                     "size_ratio": [round(width / (x1 - x0), 4), round(height / (y1 - y0), 4)],
                     "margins": margins,
+                    "visible_background_residue_pixels": residue_pixels,
                 }
             )
     metrics = {
@@ -273,16 +298,21 @@ def verify(alpha_image: Image.Image) -> dict[str, object]:
         "min_safe_margin_px": MIN_SAFE_MARGIN_PX,
         "margin_violations": margin_violations,
         "margin_violation_cells": margin_violation_cells,
+        "max_visible_background_residue_pixels": MAX_VISIBLE_BACKGROUND_RESIDUE_PIXELS,
+        "residue_violations": residue_violations,
+        "residue_violation_cells": residue_violation_cells,
         "center_x_range": [round(min(centers_x), 4), round(max(centers_x), 4)] if centers_x else [0, 0],
         "center_y_range": [round(min(centers_y), 4), round(max(centers_y), 4)] if centers_y else [0, 0],
         "width_range": [min(widths), max(widths)] if widths else [0, 0],
         "height_range": [min(heights), max(heights)] if heights else [0, 0],
+        "area_range": [min(cell["area"] for cell in cells if not cell.get("empty")), max(cell["area"] for cell in cells if not cell.get("empty"))] if centers_x else [0, 0],
         "cells": cells,
     }
     # Conservative first-pass gate; visual approval still required.
     metrics["passes_mechanical_gate"] = (
         empty == 0
         and margin_violations == 0
+        and residue_violations == 0
         and (metrics["center_x_range"][1] - metrics["center_x_range"][0]) <= 0.18
         and (metrics["center_y_range"][1] - metrics["center_y_range"][0]) <= 0.18
         and (metrics["width_range"][1] - metrics["width_range"][0]) <= max(20, int(w / 5 * 0.28))
@@ -302,12 +332,82 @@ def compare_to_reference(metrics: dict[str, object], reference_metrics: dict[str
     ref_height_mid = (ref_height[0] + ref_height[1]) / 2
     width_ratio = width_mid / ref_width_mid if ref_width_mid else 0
     height_ratio = height_mid / ref_height_mid if ref_height_mid else 0
+    ref_cells = {
+        (cell["row"], cell["col"]): cell
+        for cell in reference_metrics["cells"]
+        if not cell.get("empty")
+    }
+    cell_checks: list[dict[str, object]] = []
+    max_center_delta = 0.0
+    min_area_ratio = 10.0
+    max_area_ratio = 0.0
+    min_width_ratio = 10.0
+    max_width_ratio = 0.0
+    min_height_ratio = 10.0
+    max_height_ratio = 0.0
+    violating_cells: list[dict[str, object]] = []
+    for cell in metrics["cells"]:
+        if cell.get("empty"):
+            continue
+        key = (cell["row"], cell["col"])
+        ref = ref_cells.get(key)
+        if not ref:
+            continue
+        area_ratio = cell["area"] / ref["area"] if ref["area"] else 0
+        width_ratio = (cell["bbox"][2] - cell["bbox"][0]) / (ref["bbox"][2] - ref["bbox"][0])
+        height_ratio = (cell["bbox"][3] - cell["bbox"][1]) / (ref["bbox"][3] - ref["bbox"][1])
+        center_delta = max(
+            abs(cell["center_ratio"][0] - ref["center_ratio"][0]),
+            abs(cell["center_ratio"][1] - ref["center_ratio"][1]),
+        )
+        max_center_delta = max(max_center_delta, center_delta)
+        min_area_ratio = min(min_area_ratio, area_ratio)
+        max_area_ratio = max(max_area_ratio, area_ratio)
+        min_width_ratio = min(min_width_ratio, width_ratio)
+        max_width_ratio = max(max_width_ratio, width_ratio)
+        min_height_ratio = min(min_height_ratio, height_ratio)
+        max_height_ratio = max(max_height_ratio, height_ratio)
+        passes_cell = (
+            center_delta <= MAX_CELL_CENTER_DELTA_RATIO
+            and MIN_CELL_AREA_RATIO_TO_REFERENCE <= area_ratio <= MAX_CELL_AREA_RATIO_TO_REFERENCE
+            and MIN_CELL_DIMENSION_RATIO_TO_REFERENCE <= width_ratio <= MAX_CELL_DIMENSION_RATIO_TO_REFERENCE
+            and MIN_CELL_DIMENSION_RATIO_TO_REFERENCE <= height_ratio <= MAX_CELL_DIMENSION_RATIO_TO_REFERENCE
+        )
+        check = {
+            "row": cell["row"],
+            "col": cell["col"],
+            "center_delta_ratio": round(center_delta, 4),
+            "area_ratio": round(area_ratio, 4),
+            "width_ratio": round(width_ratio, 4),
+            "height_ratio": round(height_ratio, 4),
+            "passes_cell_reference_gate": passes_cell,
+        }
+        cell_checks.append(check)
+        if not passes_cell:
+            violating_cells.append(check)
+
+    passes_cell_reference_gate = len(violating_cells) == 0 and len(cell_checks) == 25
     result = {
         "reference_width_range": ref_width,
         "reference_height_range": ref_height,
         "width_ratio_to_reference": round(width_ratio, 4),
         "height_ratio_to_reference": round(height_ratio, 4),
         "passes_reference_scale_gate": 0.9 <= width_ratio <= 1.12 and 0.9 <= height_ratio <= 1.12,
+        "max_cell_center_delta_ratio": round(max_center_delta, 4),
+        "cell_area_ratio_range": [round(min_area_ratio, 4), round(max_area_ratio, 4)] if cell_checks else [0, 0],
+        "cell_width_ratio_range": [round(min_width_ratio, 4), round(max_width_ratio, 4)] if cell_checks else [0, 0],
+        "cell_height_ratio_range": [round(min_height_ratio, 4), round(max_height_ratio, 4)] if cell_checks else [0, 0],
+        "cell_reference_gate_limits": {
+            "max_center_delta_ratio": MAX_CELL_CENTER_DELTA_RATIO,
+            "area_ratio": [MIN_CELL_AREA_RATIO_TO_REFERENCE, MAX_CELL_AREA_RATIO_TO_REFERENCE],
+            "dimension_ratio": [
+                MIN_CELL_DIMENSION_RATIO_TO_REFERENCE,
+                MAX_CELL_DIMENSION_RATIO_TO_REFERENCE,
+            ],
+        },
+        "passes_cell_reference_gate": passes_cell_reference_gate,
+        "cell_reference_violations": violating_cells,
+        "cell_reference_checks": cell_checks,
     }
     return result
 
@@ -371,6 +471,7 @@ def main() -> None:
         metrics["passes_mechanical_gate"] = (
             metrics["passes_mechanical_gate"]
             and metrics["reference_comparison"]["passes_reference_scale_gate"]
+            and metrics["reference_comparison"]["passes_cell_reference_gate"]
         )
     args.metrics_out.parent.mkdir(parents=True, exist_ok=True)
     args.metrics_out.write_text(json.dumps(metrics, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
