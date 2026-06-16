@@ -1,0 +1,671 @@
+{
+  "image_size": [
+    1165,
+    1240
+  ],
+  "cell_size": [
+    233.0,
+    248.0
+  ],
+  "empty_cells": 0,
+  "min_safe_margin_px": 8,
+  "margin_violations": 0,
+  "margin_violation_cells": [],
+  "center_x_range": [
+    0.47,
+    0.5451
+  ],
+  "center_y_range": [
+    0.4839,
+    0.506
+  ],
+  "width_range": [
+    139,
+    156
+  ],
+  "height_range": [
+    179,
+    196
+  ],
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "bbox": [
+        49,
+        29,
+        205,
+        219
+      ],
+      "area": 23330,
+      "center_ratio": [
+        0.5451,
+        0.5
+      ],
+      "size_ratio": [
+        0.6695,
+        0.7661
+      ],
+      "margins": {
+        "left": 49,
+        "top": 29,
+        "right": 28,
+        "bottom": 29
+      }
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "bbox": [
+        49,
+        28,
+        200,
+        219
+      ],
+      "area": 23565,
+      "center_ratio": [
+        0.5343,
+        0.498
+      ],
+      "size_ratio": [
+        0.6481,
+        0.7702
+      ],
+      "margins": {
+        "left": 49,
+        "top": 28,
+        "right": 33,
+        "bottom": 29
+      }
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "bbox": [
+        39,
+        25,
+        193,
+        219
+      ],
+      "area": 24520,
+      "center_ratio": [
+        0.4979,
+        0.4919
+      ],
+      "size_ratio": [
+        0.6609,
+        0.7823
+      ],
+      "margins": {
+        "left": 39,
+        "top": 25,
+        "right": 40,
+        "bottom": 29
+      }
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "bbox": [
+        42,
+        27,
+        188,
+        219
+      ],
+      "area": 23260,
+      "center_ratio": [
+        0.4936,
+        0.496
+      ],
+      "size_ratio": [
+        0.6266,
+        0.7742
+      ],
+      "margins": {
+        "left": 42,
+        "top": 27,
+        "right": 45,
+        "bottom": 29
+      }
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "bbox": [
+        43,
+        26,
+        194,
+        219
+      ],
+      "area": 22933,
+      "center_ratio": [
+        0.5086,
+        0.494
+      ],
+      "size_ratio": [
+        0.6481,
+        0.7782
+      ],
+      "margins": {
+        "left": 43,
+        "top": 26,
+        "right": 39,
+        "bottom": 29
+      }
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "bbox": [
+        50,
+        24,
+        196,
+        217
+      ],
+      "area": 22737,
+      "center_ratio": [
+        0.5279,
+        0.4859
+      ],
+      "size_ratio": [
+        0.6266,
+        0.7782
+      ],
+      "margins": {
+        "left": 50,
+        "top": 24,
+        "right": 37,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "bbox": [
+        49,
+        25,
+        193,
+        217
+      ],
+      "area": 23147,
+      "center_ratio": [
+        0.5193,
+        0.4879
+      ],
+      "size_ratio": [
+        0.618,
+        0.7742
+      ],
+      "margins": {
+        "left": 49,
+        "top": 25,
+        "right": 40,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "bbox": [
+        40,
+        24,
+        191,
+        217
+      ],
+      "area": 23953,
+      "center_ratio": [
+        0.4957,
+        0.4859
+      ],
+      "size_ratio": [
+        0.6481,
+        0.7782
+      ],
+      "margins": {
+        "left": 40,
+        "top": 24,
+        "right": 42,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "bbox": [
+        42,
+        24,
+        185,
+        217
+      ],
+      "area": 22773,
+      "center_ratio": [
+        0.4871,
+        0.4859
+      ],
+      "size_ratio": [
+        0.6137,
+        0.7782
+      ],
+      "margins": {
+        "left": 42,
+        "top": 24,
+        "right": 48,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "bbox": [
+        49,
+        24,
+        192,
+        217
+      ],
+      "area": 22347,
+      "center_ratio": [
+        0.5172,
+        0.4859
+      ],
+      "size_ratio": [
+        0.6137,
+        0.7782
+      ],
+      "margins": {
+        "left": 49,
+        "top": 24,
+        "right": 41,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "bbox": [
+        49,
+        22,
+        191,
+        218
+      ],
+      "area": 23055,
+      "center_ratio": [
+        0.515,
+        0.4839
+      ],
+      "size_ratio": [
+        0.6094,
+        0.7903
+      ],
+      "margins": {
+        "left": 49,
+        "top": 22,
+        "right": 42,
+        "bottom": 30
+      }
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "bbox": [
+        47,
+        23,
+        190,
+        218
+      ],
+      "area": 23163,
+      "center_ratio": [
+        0.5086,
+        0.4859
+      ],
+      "size_ratio": [
+        0.6137,
+        0.7863
+      ],
+      "margins": {
+        "left": 47,
+        "top": 23,
+        "right": 43,
+        "bottom": 30
+      }
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "bbox": [
+        41,
+        23,
+        189,
+        218
+      ],
+      "area": 23910,
+      "center_ratio": [
+        0.4936,
+        0.4859
+      ],
+      "size_ratio": [
+        0.6352,
+        0.7863
+      ],
+      "margins": {
+        "left": 41,
+        "top": 23,
+        "right": 44,
+        "bottom": 30
+      }
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "bbox": [
+        44,
+        22,
+        185,
+        218
+      ],
+      "area": 22916,
+      "center_ratio": [
+        0.4914,
+        0.4839
+      ],
+      "size_ratio": [
+        0.6052,
+        0.7903
+      ],
+      "margins": {
+        "left": 44,
+        "top": 22,
+        "right": 48,
+        "bottom": 30
+      }
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "bbox": [
+        48,
+        23,
+        188,
+        218
+      ],
+      "area": 22558,
+      "center_ratio": [
+        0.5064,
+        0.4859
+      ],
+      "size_ratio": [
+        0.6009,
+        0.7863
+      ],
+      "margins": {
+        "left": 48,
+        "top": 23,
+        "right": 45,
+        "bottom": 30
+      }
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "bbox": [
+        42,
+        33,
+        189,
+        217
+      ],
+      "area": 21443,
+      "center_ratio": [
+        0.4957,
+        0.504
+      ],
+      "size_ratio": [
+        0.6309,
+        0.7419
+      ],
+      "margins": {
+        "left": 42,
+        "top": 33,
+        "right": 44,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "bbox": [
+        44,
+        34,
+        189,
+        217
+      ],
+      "area": 21293,
+      "center_ratio": [
+        0.5,
+        0.506
+      ],
+      "size_ratio": [
+        0.6223,
+        0.7379
+      ],
+      "margins": {
+        "left": 44,
+        "top": 34,
+        "right": 44,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "bbox": [
+        44,
+        34,
+        185,
+        217
+      ],
+      "area": 21555,
+      "center_ratio": [
+        0.4914,
+        0.506
+      ],
+      "size_ratio": [
+        0.6052,
+        0.7379
+      ],
+      "margins": {
+        "left": 44,
+        "top": 34,
+        "right": 48,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "bbox": [
+        44,
+        33,
+        187,
+        217
+      ],
+      "area": 21128,
+      "center_ratio": [
+        0.4957,
+        0.504
+      ],
+      "size_ratio": [
+        0.6137,
+        0.7419
+      ],
+      "margins": {
+        "left": 44,
+        "top": 33,
+        "right": 46,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "bbox": [
+        48,
+        34,
+        190,
+        217
+      ],
+      "area": 20887,
+      "center_ratio": [
+        0.5107,
+        0.506
+      ],
+      "size_ratio": [
+        0.6094,
+        0.7379
+      ],
+      "margins": {
+        "left": 48,
+        "top": 34,
+        "right": 43,
+        "bottom": 31
+      }
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "bbox": [
+        36,
+        31,
+        183,
+        211
+      ],
+      "area": 20520,
+      "center_ratio": [
+        0.47,
+        0.4879
+      ],
+      "size_ratio": [
+        0.6309,
+        0.7258
+      ],
+      "margins": {
+        "left": 36,
+        "top": 31,
+        "right": 50,
+        "bottom": 37
+      }
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "bbox": [
+        41,
+        31,
+        186,
+        211
+      ],
+      "area": 20637,
+      "center_ratio": [
+        0.4871,
+        0.4879
+      ],
+      "size_ratio": [
+        0.6223,
+        0.7258
+      ],
+      "margins": {
+        "left": 41,
+        "top": 31,
+        "right": 47,
+        "bottom": 37
+      }
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "bbox": [
+        44,
+        31,
+        183,
+        211
+      ],
+      "area": 20795,
+      "center_ratio": [
+        0.4871,
+        0.4879
+      ],
+      "size_ratio": [
+        0.5966,
+        0.7258
+      ],
+      "margins": {
+        "left": 44,
+        "top": 31,
+        "right": 50,
+        "bottom": 37
+      }
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "bbox": [
+        46,
+        31,
+        188,
+        211
+      ],
+      "area": 20156,
+      "center_ratio": [
+        0.5021,
+        0.4879
+      ],
+      "size_ratio": [
+        0.6094,
+        0.7258
+      ],
+      "margins": {
+        "left": 46,
+        "top": 31,
+        "right": 45,
+        "bottom": 37
+      }
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "bbox": [
+        47,
+        32,
+        191,
+        211
+      ],
+      "area": 20126,
+      "center_ratio": [
+        0.5107,
+        0.4899
+      ],
+      "size_ratio": [
+        0.618,
+        0.7218
+      ],
+      "margins": {
+        "left": 47,
+        "top": 32,
+        "right": 42,
+        "bottom": 37
+      }
+    }
+  ],
+  "passes_mechanical_gate": true,
+  "reference_comparison": {
+    "reference_width_range": [
+      143,
+      160
+    ],
+    "reference_height_range": [
+      173,
+      193
+    ],
+    "width_ratio_to_reference": 0.9736,
+    "height_ratio_to_reference": 1.0246,
+    "passes_reference_scale_gate": true
+  }
+}

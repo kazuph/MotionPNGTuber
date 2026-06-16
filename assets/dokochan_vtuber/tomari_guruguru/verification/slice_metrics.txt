@@ -1,0 +1,27 @@
+counts A=25 B=25 C=25 D=25 E=25 F=25
+r0c0 bbox_delta_vs_A=0 area_range=446458..446458
+r0c1 bbox_delta_vs_A=0 area_range=460274..460274
+r0c2 bbox_delta_vs_A=0 area_range=443299..443299
+r0c3 bbox_delta_vs_A=0 area_range=463881..463881
+r0c4 bbox_delta_vs_A=0 area_range=433738..433738
+r1c0 bbox_delta_vs_A=0 area_range=449975..449975
+r1c1 bbox_delta_vs_A=0 area_range=467941..467941
+r1c2 bbox_delta_vs_A=0 area_range=453065..453065
+r1c3 bbox_delta_vs_A=0 area_range=469364..469364
+r1c4 bbox_delta_vs_A=0 area_range=441802..441802
+r2c0 bbox_delta_vs_A=0 area_range=473642..473642
+r2c1 bbox_delta_vs_A=0 area_range=481154..481154
+r2c2 bbox_delta_vs_A=0 area_range=467666..467666
+r2c3 bbox_delta_vs_A=0 area_range=482988..482988
+r2c4 bbox_delta_vs_A=0 area_range=467727..467727
+r3c0 bbox_delta_vs_A=0 area_range=472727..472727
+r3c1 bbox_delta_vs_A=0 area_range=480945..480945
+r3c2 bbox_delta_vs_A=0 area_range=468080..468080
+r3c3 bbox_delta_vs_A=0 area_range=483421..483421
+r3c4 bbox_delta_vs_A=0 area_range=470479..470479
+r4c0 bbox_delta_vs_A=0 area_range=436501..436501
+r4c1 bbox_delta_vs_A=0 area_range=444474..444474
+r4c2 bbox_delta_vs_A=0 area_range=439711..439711
+r4c3 bbox_delta_vs_A=0 area_range=447023..447023
+r4c4 bbox_delta_vs_A=0 area_range=433168..433168
+max_bbox_delta_vs_A=0

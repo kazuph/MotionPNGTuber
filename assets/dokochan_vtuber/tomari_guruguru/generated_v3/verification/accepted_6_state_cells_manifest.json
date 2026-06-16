@@ -1,0 +1,92 @@
+[
+  {
+    "label": "A open eyes / closed mouth",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/A_eyes_open_mouth_closed_grid_candidate_01_cells_contact_dark.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/A_eyes_open_mouth_closed_grid_candidate_01_cells_metrics.json",
+    "pass": true,
+    "min_margin": 18,
+    "width_range": [
+      148,
+      158
+    ],
+    "height_range": [
+      179,
+      186
+    ]
+  },
+  {
+    "label": "B open eyes / half mouth",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/B_eyes_open_mouth_half_grid_candidate_03_cells_contact_dark.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/B_eyes_open_mouth_half_grid_candidate_03_cells_metrics.json",
+    "pass": true,
+    "min_margin": 19,
+    "width_range": [
+      145,
+      159
+    ],
+    "height_range": [
+      173,
+      197
+    ]
+  },
+  {
+    "label": "C open eyes / open mouth",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/C_eyes_open_mouth_open_grid_candidate_02_cells_contact_dark.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/C_eyes_open_mouth_open_grid_candidate_02_cells_metrics.json",
+    "pass": true,
+    "min_margin": 20,
+    "width_range": [
+      143,
+      160
+    ],
+    "height_range": [
+      173,
+      193
+    ]
+  },
+  {
+    "label": "D closed eyes / closed mouth",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/D_eyes_closed_mouth_closed_grid_candidate_04_cells_contact_dark.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/D_eyes_closed_mouth_closed_grid_candidate_04_cells_metrics.json",
+    "pass": true,
+    "min_margin": 17,
+    "width_range": [
+      141,
+      155
+    ],
+    "height_range": [
+      175,
+      193
+    ]
+  },
+  {
+    "label": "E closed eyes / half mouth",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/E_eyes_closed_mouth_half_grid_candidate_04_cells_contact_dark.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/E_eyes_closed_mouth_half_grid_candidate_04_cells_metrics.json",
+    "pass": true,
+    "min_margin": 16,
+    "width_range": [
+      138,
+      154
+    ],
+    "height_range": [
+      184,
+      192
+    ]
+  },
+  {
+    "label": "F closed eyes / open mouth",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/F_eyes_closed_mouth_open_grid_candidate_02_cells_contact_dark.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/F_eyes_closed_mouth_open_grid_candidate_02_cells_metrics.json",
+    "pass": true,
+    "min_margin": 17,
+    "width_range": [
+      138,
+      161
+    ],
+    "height_range": [
+      181,
+      191
+    ]
+  }
+]

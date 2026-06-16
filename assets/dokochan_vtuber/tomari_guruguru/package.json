@@ -1,0 +1,26 @@
+{
+  "name": "dokochan-guruguru",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --base /dokochan-guruguru/",
+    "slice:assets": "python tools/slice_character_sheets.py --source sheets_patched --sheets-out sheets --uploads-out uploads --slices-out public/slices2 --format png --jobs 1 --component-mode --min-component-area 80 --alpha-threshold 64 && python tools/fix_slice_alpha.py",
+    "verify:assets": "python ../../../tools/dokochan_tomari_verify_assets.py",
+    "verify:pages": "node scripts/verify-pages-build.mjs",
+    "test:e2e": "playwright test --config playwright.config.cjs"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.2",
+    "vite": "^8.0.16"
+  }
+}

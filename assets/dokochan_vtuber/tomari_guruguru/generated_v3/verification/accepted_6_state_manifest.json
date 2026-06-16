@@ -1,0 +1,170 @@
+[
+  {
+    "label": "A eyes open / mouth closed",
+    "source": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/source_sheets/A_eyes_open_mouth_closed_grid_candidate_01.png",
+    "alpha": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/alpha_sheets/A_eyes_open_mouth_closed_grid_candidate_01_alpha.png",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/A_eyes_open_mouth_closed_grid_candidate_01_alpha_contact_dark.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/A_eyes_open_mouth_closed_grid_candidate_01_metrics.json",
+    "passes_mechanical_gate": true,
+    "min_margin": 24,
+    "width_range": [
+      148,
+      158
+    ],
+    "height_range": [
+      179,
+      186
+    ],
+    "reference_comparison": null
+  },
+  {
+    "label": "B eyes open / mouth half",
+    "source": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/source_sheets/B_eyes_open_mouth_half_grid_candidate_03.png",
+    "alpha": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/alpha_sheets/B_eyes_open_mouth_half_grid_candidate_03_alpha_clean.png",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/B_eyes_open_mouth_half_grid_candidate_03_alpha_contact_dark_clean.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/B_eyes_open_mouth_half_grid_candidate_03_metrics_clean.json",
+    "passes_mechanical_gate": true,
+    "min_margin": 5,
+    "width_range": [
+      145,
+      159
+    ],
+    "height_range": [
+      173,
+      197
+    ],
+    "reference_comparison": {
+      "reference_width_range": [
+        148,
+        158
+      ],
+      "reference_height_range": [
+        179,
+        186
+      ],
+      "width_ratio_to_reference": 0.9935,
+      "height_ratio_to_reference": 1.0137,
+      "passes_reference_scale_gate": true
+    }
+  },
+  {
+    "label": "C eyes open / mouth open",
+    "source": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/source_sheets/C_eyes_open_mouth_open_grid_candidate_02.png",
+    "alpha": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/alpha_sheets/C_eyes_open_mouth_open_grid_candidate_02_alpha_clean.png",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/C_eyes_open_mouth_open_grid_candidate_02_alpha_contact_dark_clean.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/C_eyes_open_mouth_open_grid_candidate_02_metrics_clean.json",
+    "passes_mechanical_gate": true,
+    "min_margin": 12,
+    "width_range": [
+      143,
+      160
+    ],
+    "height_range": [
+      173,
+      193
+    ],
+    "reference_comparison": {
+      "reference_width_range": [
+        148,
+        158
+      ],
+      "reference_height_range": [
+        179,
+        186
+      ],
+      "width_ratio_to_reference": 0.9902,
+      "height_ratio_to_reference": 1.0027,
+      "passes_reference_scale_gate": true
+    }
+  },
+  {
+    "label": "D eyes closed / mouth closed",
+    "source": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/source_sheets/D_eyes_closed_mouth_closed_grid_candidate_04.png",
+    "alpha": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/alpha_sheets/D_eyes_closed_mouth_closed_grid_candidate_04_alpha_clean.png",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/D_eyes_closed_mouth_closed_grid_candidate_04_alpha_contact_dark_clean.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/D_eyes_closed_mouth_closed_grid_candidate_04_metrics_clean.json",
+    "passes_mechanical_gate": true,
+    "min_margin": 14,
+    "width_range": [
+      141,
+      155
+    ],
+    "height_range": [
+      175,
+      193
+    ],
+    "reference_comparison": {
+      "reference_width_range": [
+        148,
+        158
+      ],
+      "reference_height_range": [
+        179,
+        186
+      ],
+      "width_ratio_to_reference": 0.9673,
+      "height_ratio_to_reference": 1.0082,
+      "passes_reference_scale_gate": true
+    }
+  },
+  {
+    "label": "E eyes closed / mouth half",
+    "source": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/source_sheets/E_eyes_closed_mouth_half_grid_candidate_04.png",
+    "alpha": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/alpha_sheets/E_eyes_closed_mouth_half_grid_candidate_04_alpha_clean.png",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/E_eyes_closed_mouth_half_grid_candidate_04_alpha_contact_dark_clean.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/E_eyes_closed_mouth_half_grid_candidate_04_metrics_clean.json",
+    "passes_mechanical_gate": true,
+    "min_margin": 15,
+    "width_range": [
+      138,
+      154
+    ],
+    "height_range": [
+      184,
+      192
+    ],
+    "reference_comparison": {
+      "reference_width_range": [
+        148,
+        158
+      ],
+      "reference_height_range": [
+        179,
+        186
+      ],
+      "width_ratio_to_reference": 0.9542,
+      "height_ratio_to_reference": 1.0301,
+      "passes_reference_scale_gate": true
+    }
+  },
+  {
+    "label": "F eyes closed / mouth open",
+    "source": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/source_sheets/F_eyes_closed_mouth_open_grid_candidate_02.png",
+    "alpha": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/alpha_sheets/F_eyes_closed_mouth_open_grid_candidate_02_alpha_clean.png",
+    "contact": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/F_eyes_closed_mouth_open_grid_candidate_02_alpha_contact_dark_clean.jpg",
+    "metrics": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/verification/F_eyes_closed_mouth_open_grid_candidate_02_metrics_clean.json",
+    "passes_mechanical_gate": true,
+    "min_margin": 4,
+    "width_range": [
+      138,
+      161
+    ],
+    "height_range": [
+      181,
+      191
+    ],
+    "reference_comparison": {
+      "reference_width_range": [
+        148,
+        158
+      ],
+      "reference_height_range": [
+        179,
+        186
+      ],
+      "width_ratio_to_reference": 0.9771,
+      "height_ratio_to_reference": 1.0192,
+      "passes_reference_scale_gate": true
+    }
+  }
+]
