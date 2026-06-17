@@ -132,15 +132,7 @@ test.describe('Dokochan tomari-guruguru v3 runtime', () => {
     await page.screenshot({ path: path.join(evidenceDir, `guruguru-v3-blink-${base.replaceAll('/', '-')}.png`) });
   });
 
-  test('v3 blink adjustment JSON is applied to the closed-eye overlay', async ({ page }) => {
-    const adjustPath = base.replace(/\/?[^/]+$/, '/blink_adjustments.json');
-    await page.route(`**/${adjustPath}`, async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ 'A-D:2-2': { dx: 24, dy: -12, scale: 1.045, opacity: 0.72 } }),
-      });
-    });
+  test('v3 blink switches whole frame without overlay adjustment', async ({ page }) => {
     await page.addInitScript(() => {
       Math.random = () => 0;
       const realSetTimeout = window.setTimeout.bind(window);
@@ -161,8 +153,8 @@ test.describe('Dokochan tomari-guruguru v3 runtime', () => {
         return { opacity: style.opacity, transform: img.style.transform };
       }, `${base}/D/r2c2.png`);
     }, { timeout: 4000, intervals: [20] }).toEqual({
-      opacity: '0.72',
-      transform: 'translate(2%, -1%) scale(1.045)',
+      opacity: '1',
+      transform: '',
     });
   });
 });

@@ -194,7 +194,7 @@ function App() {
         <div style={{ fontSize: 'clamp(12px, 1.6vmin, 16px)', color: subColor, marginTop: 6, letterSpacing: '0.08em' }}>マウスを動かすと こっちを見るよ</div>
       </div>
 
-      <a href="talk.html" style={{
+      <a href={`talk.html?base=${encodeURIComponent(assetBase)}`} style={{
         position: 'absolute', top: 18, right: 18, fontSize: 13, fontWeight: 700,
         color: subColor, textDecoration: 'none', letterSpacing: '0.06em'
       }}>口パク版 →</a>
