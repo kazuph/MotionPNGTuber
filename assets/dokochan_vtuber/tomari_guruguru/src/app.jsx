@@ -13,27 +13,31 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 }/*EDITMODE-END*/;
 
 const { rows: ROWS, cols: COLS } = charConfig;
-const SRC = (r, c) => charConfig.src(charConfig.sheets.eyesOpen.close, r, c);
-const BLINK_SRC = (r, c) => charConfig.src(charConfig.sheets.eyesClosed.close, r, c);
-const BLINK_PAIR = 'A-D';
 
 const BG_OPTIONS = ['#FFF8EE', '#FDEFEF', '#EEF4FB', '#2B2926'];
+const ASSET_SET_OPTIONS = [
+  { label: '既存 default slices2', value: 'slices2' },
+  { label: '既存 v3 refedit', value: 'generated_v3/slices_refedit_png' },
+  { label: '既存 v3 cells', value: 'generated_v3/slices_cells_png' },
+  { label: '既存最良 v3 refedit BC', value: 'generated_v3/slices_refedit_bc_png' },
+  { label: '候補 GPT髪飾り復元', value: 'generated_v6_gpt_hairclip/slices_gpt_hairclip_candidate_01_png' },
+];
+const DEFAULT_ASSET_BASE = 'generated_v3/slices_refedit_bc_png';
+const ASSET_SET_VALUES = new Set(ASSET_SET_OPTIONS.map((option) => option.value));
 
 function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
-function blinkAdjustKey(r, c) { return `${BLINK_PAIR}:${r}-${c}`; }
-function blinkTransform(adjust) {
-  const dx = Number(adjust?.dx || 0);
-  const dy = Number(adjust?.dy || 0);
-  const scale = Number(adjust?.scale || 1);
-  return `translate(${dx / 12}%, ${dy / 12}%) scale(${scale})`;
+function srcFor(basePath, sheet, r, c) {
+  return `${basePath}/${sheet}/r${r}c${c}.${charConfig.ext}`;
 }
 
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [assetBase, setAssetBaseState] = useState(
+    ASSET_SET_VALUES.has(charConfig.basePath) ? charConfig.basePath : DEFAULT_ASSET_BASE
+  );
   const [cell, setCell] = useState({ r: 2, c: 2 });
   const [pressed, setPressed] = useState(false);
   const [blink, setBlink] = useState(false);
-  const [blinkAdjustments, setBlinkAdjustments] = useState({});
   const stageRef = useRef(null);
   const charRef = useRef(null);
   const target = useRef({ x: 0, y: 0 });   // -1..1
@@ -41,13 +45,16 @@ function App() {
   const tweaksRef = useRef(t);
   tweaksRef.current = t;
 
+  const setAssetBase = (nextBase) => {
+    const safeBase = ASSET_SET_VALUES.has(nextBase) ? nextBase : DEFAULT_ASSET_BASE;
+    setAssetBaseState(safeBase);
+    const url = new URL(window.location.href);
+    url.searchParams.set('base', safeBase);
+    window.history.replaceState(null, '', url);
+  };
+
   useEffect(() => {
-    let alive = true;
-    fetch(charConfig.blinkAdjustPath)
-      .then((res) => (res.ok ? res.json() : {}))
-      .then((json) => { if (alive && json && typeof json === 'object') setBlinkAdjustments(json); })
-      .catch(() => {});
-    return () => { alive = false; };
+    if (!ASSET_SET_VALUES.has(charConfig.basePath)) setAssetBase(DEFAULT_ASSET_BASE);
   }, []);
 
   useEffect(() => {
@@ -136,6 +143,7 @@ function App() {
   const dark = t.bgColor === '#2B2926';
   const inkColor = dark ? 'rgba(255,248,238,0.85)' : 'rgba(60,48,38,0.8)';
   const subColor = dark ? 'rgba(255,248,238,0.45)' : 'rgba(60,48,38,0.45)';
+  const activeSheet = blink ? charConfig.sheets.eyesClosed.close : charConfig.sheets.eyesOpen.close;
 
   return (
     <div
@@ -165,8 +173,8 @@ function App() {
       >
         {frames.map(({ r, c }) => (
           <img
-            key={`${r}-${c}`}
-            src={SRC(r, c)}
+            key={`${activeSheet}-${r}-${c}`}
+            src={srcFor(assetBase, activeSheet, r, c)}
             alt=""
             draggable="false"
             style={{
@@ -176,20 +184,6 @@ function App() {
             }}
           ></img>
         ))}
-        {blink ? (
-          <img
-            src={BLINK_SRC(cell.r, cell.c)}
-            alt=""
-            draggable="false"
-            style={{
-              position: 'absolute', inset: 0, width: '100%', height: '100%',
-              opacity: blinkAdjustments[blinkAdjustKey(cell.r, cell.c)]?.opacity ?? 1,
-              transform: blinkTransform(blinkAdjustments[blinkAdjustKey(cell.r, cell.c)]),
-              transformOrigin: '50% 50%',
-              pointerEvents: 'none'
-            }}
-          ></img>
-        ) : null}
       </div>
 
       <div style={{
@@ -205,9 +199,42 @@ function App() {
         color: subColor, textDecoration: 'none', letterSpacing: '0.06em'
       }}>口パク版 →</a>
 
+      <label style={{
+        position: 'absolute', top: 16, left: 16, zIndex: 4,
+        display: 'flex', alignItems: 'center', gap: 8,
+        padding: '8px 10px', borderRadius: 8,
+        background: dark ? 'rgba(255,248,238,0.14)' : 'rgba(255,255,255,0.72)',
+        border: dark ? '1px solid rgba(255,248,238,0.18)' : '1px solid rgba(60,48,38,0.14)',
+        color: inkColor, fontSize: 12, fontWeight: 700,
+        boxShadow: '0 8px 28px rgba(0,0,0,0.10)',
+        backdropFilter: 'blur(14px) saturate(150%)',
+        WebkitBackdropFilter: 'blur(14px) saturate(150%)',
+        cursor: 'default'
+      }}>
+        <span>素材</span>
+        <select
+          value={assetBase}
+          onChange={(e) => setAssetBase(e.target.value)}
+          style={{
+            appearance: 'auto',
+            maxWidth: 'min(56vw, 260px)',
+            border: dark ? '1px solid rgba(255,248,238,0.22)' : '1px solid rgba(60,48,38,0.16)',
+            borderRadius: 6,
+            padding: '4px 8px',
+            background: dark ? 'rgba(43,41,38,0.85)' : 'rgba(255,255,255,0.90)',
+            color: inkColor,
+            font: 'inherit'
+          }}
+        >
+          {ASSET_SET_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </label>
+
       {t.showDebug ? (
         <div style={{
-          position: 'absolute', top: 16, left: 16,
+          position: 'absolute', top: 68, left: 16,
           background: 'rgba(0,0,0,0.55)', color: '#fff', borderRadius: 10,
           padding: '10px 12px', fontSize: 12, fontFamily: 'ui-monospace, monospace',
           pointerEvents: 'none', lineHeight: 1.5
@@ -225,6 +252,9 @@ function App() {
       ) : null}
 
       <TweaksPanel>
+        <TweakSection label="素材"></TweakSection>
+        <TweakSelect label="素材セット" value={assetBase} options={ASSET_SET_OPTIONS}
+          onChange={setAssetBase}></TweakSelect>
         <TweakSection label="動き"></TweakSection>
         <TweakSlider label="追従範囲" value={t.followRange} min={120} max={1200} step={10} unit="px"
           onChange={(v) => setTweak('followRange', v)}></TweakSlider>
