@@ -1,0 +1,42 @@
+[
+  {
+    "variant": "D_donor_dy-40",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_D_donor_dy-40.png",
+    "diff_pixels": 44389,
+    "inside_semantic_eye_pixels": 44389,
+    "outside_semantic_eye_pixels": 0,
+    "outside_semantic_eye_ratio": 0.0
+  },
+  {
+    "variant": "D_donor_dy-20",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_D_donor_dy-20.png",
+    "diff_pixels": 40656,
+    "inside_semantic_eye_pixels": 40656,
+    "outside_semantic_eye_pixels": 0,
+    "outside_semantic_eye_ratio": 0.0
+  },
+  {
+    "variant": "D_donor_dy+0",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_D_donor_dy+0.png",
+    "diff_pixels": 36431,
+    "inside_semantic_eye_pixels": 36431,
+    "outside_semantic_eye_pixels": 0,
+    "outside_semantic_eye_ratio": 0.0
+  },
+  {
+    "variant": "D_donor_dy+20",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_D_donor_dy+20.png",
+    "diff_pixels": 32287,
+    "inside_semantic_eye_pixels": 32287,
+    "outside_semantic_eye_pixels": 0,
+    "outside_semantic_eye_ratio": 0.0
+  },
+  {
+    "variant": "D_donor_dy+40",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_D_donor_dy+40.png",
+    "diff_pixels": 34973,
+    "inside_semantic_eye_pixels": 34973,
+    "outside_semantic_eye_pixels": 0,
+    "outside_semantic_eye_ratio": 0.0
+  }
+]

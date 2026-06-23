@@ -1,0 +1,27 @@
+{
+  "source": "assets/dokochan_vtuber/tomari_guruguru/generated_v3/slices_refedit_png/A/r2c2.png",
+  "crop_box": [
+    353,
+    215,
+    847,
+    589
+  ],
+  "alpha_bbox": [
+    307,
+    194,
+    893,
+    901
+  ],
+  "left_eye": [
+    465,
+    349,
+    570,
+    469
+  ],
+  "right_eye": [
+    629,
+    349,
+    734,
+    469
+  ]
+}

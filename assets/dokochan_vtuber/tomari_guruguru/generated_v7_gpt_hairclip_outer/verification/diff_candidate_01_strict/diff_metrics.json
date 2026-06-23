@@ -1,0 +1,1252 @@
+[
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 64423,
+    "inside_pixels": 6251,
+    "outside_pixels": 58172,
+    "outside_ratio": 0.9029694363814166
+  },
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 74622,
+    "inside_pixels": 6209,
+    "outside_pixels": 68413,
+    "outside_ratio": 0.9167939749671679
+  },
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 74234,
+    "inside_pixels": 2327,
+    "outside_pixels": 71907,
+    "outside_ratio": 0.9686531777891532
+  },
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 70226,
+    "inside_pixels": 6571,
+    "outside_pixels": 63655,
+    "outside_ratio": 0.9064306667046393
+  },
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 74274,
+    "inside_pixels": 8262,
+    "outside_pixels": 66012,
+    "outside_ratio": 0.8887632280474997
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 51218,
+    "inside_pixels": 6064,
+    "outside_pixels": 45154,
+    "outside_ratio": 0.8816041235503144
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 47361,
+    "inside_pixels": 5494,
+    "outside_pixels": 41867,
+    "outside_ratio": 0.8839973818120395
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 47464,
+    "inside_pixels": 6035,
+    "outside_pixels": 41429,
+    "outside_ratio": 0.8728510028653295
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 45883,
+    "inside_pixels": 6891,
+    "outside_pixels": 38992,
+    "outside_ratio": 0.8498136564740754
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 48495,
+    "inside_pixels": 6491,
+    "outside_pixels": 42004,
+    "outside_ratio": 0.8661511496030518
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 112951,
+    "inside_pixels": 12487,
+    "outside_pixels": 100464,
+    "outside_ratio": 0.8894476365857761
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 115771,
+    "inside_pixels": 12171,
+    "outside_pixels": 103600,
+    "outside_ratio": 0.8948700451753894
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 121365,
+    "inside_pixels": 11826,
+    "outside_pixels": 109539,
+    "outside_ratio": 0.9025583982202448
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 112190,
+    "inside_pixels": 12699,
+    "outside_pixels": 99491,
+    "outside_ratio": 0.8868080934129602
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 111241,
+    "inside_pixels": 13554,
+    "outside_pixels": 97687,
+    "outside_ratio": 0.8781564351273361
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 67526,
+    "inside_pixels": 10890,
+    "outside_pixels": 56636,
+    "outside_ratio": 0.8387287859491159
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 69756,
+    "inside_pixels": 11170,
+    "outside_pixels": 58586,
+    "outside_ratio": 0.8398704054131544
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 71779,
+    "inside_pixels": 10731,
+    "outside_pixels": 61048,
+    "outside_ratio": 0.8504994496997729
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 69584,
+    "inside_pixels": 11834,
+    "outside_pixels": 57750,
+    "outside_ratio": 0.8299321683145551
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 67890,
+    "inside_pixels": 11715,
+    "outside_pixels": 56175,
+    "outside_ratio": 0.8274414494034468
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 90658,
+    "inside_pixels": 9657,
+    "outside_pixels": 81001,
+    "outside_ratio": 0.8934787884135984
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 96285,
+    "inside_pixels": 11672,
+    "outside_pixels": 84613,
+    "outside_ratio": 0.8787765487874539
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 90766,
+    "inside_pixels": 11081,
+    "outside_pixels": 79685,
+    "outside_ratio": 0.8779168411079038
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 94927,
+    "inside_pixels": 10412,
+    "outside_pixels": 84515,
+    "outside_ratio": 0.8903157162872523
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 89368,
+    "inside_pixels": 10548,
+    "outside_pixels": 78820,
+    "outside_ratio": 0.8819711753647839
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 67446,
+    "inside_pixels": 6972,
+    "outside_pixels": 60474,
+    "outside_ratio": 0.8966284138421848
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 71202,
+    "inside_pixels": 4325,
+    "outside_pixels": 66877,
+    "outside_ratio": 0.9392573242324653
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 85199,
+    "inside_pixels": 4289,
+    "outside_pixels": 80910,
+    "outside_ratio": 0.9496590335567319
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 68062,
+    "inside_pixels": 6453,
+    "outside_pixels": 61609,
+    "outside_ratio": 0.905189386147924
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 73031,
+    "inside_pixels": 7765,
+    "outside_pixels": 65266,
+    "outside_ratio": 0.8936752885760841
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 48575,
+    "inside_pixels": 5755,
+    "outside_pixels": 42820,
+    "outside_ratio": 0.8815234173957798
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 47870,
+    "inside_pixels": 4768,
+    "outside_pixels": 43102,
+    "outside_ratio": 0.9003969082932943
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 53293,
+    "inside_pixels": 6889,
+    "outside_pixels": 46404,
+    "outside_ratio": 0.8707334922034788
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 53931,
+    "inside_pixels": 7129,
+    "outside_pixels": 46802,
+    "outside_ratio": 0.8678125753277336
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 47812,
+    "inside_pixels": 6907,
+    "outside_pixels": 40905,
+    "outside_ratio": 0.8555383585710701
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 112389,
+    "inside_pixels": 12209,
+    "outside_pixels": 100180,
+    "outside_ratio": 0.8913683723496072
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 116087,
+    "inside_pixels": 12651,
+    "outside_pixels": 103436,
+    "outside_ratio": 0.8910213891305658
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 122070,
+    "inside_pixels": 12452,
+    "outside_pixels": 109618,
+    "outside_ratio": 0.8979929548619644
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 113073,
+    "inside_pixels": 12949,
+    "outside_pixels": 100124,
+    "outside_ratio": 0.8854810609075553
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 111997,
+    "inside_pixels": 13669,
+    "outside_pixels": 98328,
+    "outside_ratio": 0.8779520880023572
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 67780,
+    "inside_pixels": 10385,
+    "outside_pixels": 57395,
+    "outside_ratio": 0.8467837120094424
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 71948,
+    "inside_pixels": 11681,
+    "outside_pixels": 60267,
+    "outside_ratio": 0.8376466336798799
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 75883,
+    "inside_pixels": 11893,
+    "outside_pixels": 63990,
+    "outside_ratio": 0.8432718790770001
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 71130,
+    "inside_pixels": 12347,
+    "outside_pixels": 58783,
+    "outside_ratio": 0.8264164206382679
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 68332,
+    "inside_pixels": 11976,
+    "outside_pixels": 56356,
+    "outside_ratio": 0.8247380436691447
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 91233,
+    "inside_pixels": 9777,
+    "outside_pixels": 81456,
+    "outside_ratio": 0.8928348295024826
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 98383,
+    "inside_pixels": 11907,
+    "outside_pixels": 86476,
+    "outside_ratio": 0.8789729933016883
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 98237,
+    "inside_pixels": 11458,
+    "outside_pixels": 86779,
+    "outside_ratio": 0.8833637020674491
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 92109,
+    "inside_pixels": 10516,
+    "outside_pixels": 81593,
+    "outside_ratio": 0.8858309177170526
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 89458,
+    "inside_pixels": 10546,
+    "outside_pixels": 78912,
+    "outside_ratio": 0.8821122761519372
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 71254,
+    "inside_pixels": 24283,
+    "outside_pixels": 46971,
+    "outside_ratio": 0.6592050972576978
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 68780,
+    "inside_pixels": 20604,
+    "outside_pixels": 48176,
+    "outside_ratio": 0.7004361733061937
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 68003,
+    "inside_pixels": 24706,
+    "outside_pixels": 43297,
+    "outside_ratio": 0.6366924988603444
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 63759,
+    "inside_pixels": 14770,
+    "outside_pixels": 48989,
+    "outside_ratio": 0.768346429523675
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 56440,
+    "inside_pixels": 15934,
+    "outside_pixels": 40506,
+    "outside_ratio": 0.7176824946846209
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 44636,
+    "inside_pixels": 10993,
+    "outside_pixels": 33643,
+    "outside_ratio": 0.7537189712339816
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 43343,
+    "inside_pixels": 9070,
+    "outside_pixels": 34273,
+    "outside_ratio": 0.7907389889947627
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 48364,
+    "inside_pixels": 10549,
+    "outside_pixels": 37815,
+    "outside_ratio": 0.781883218923166
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 47063,
+    "inside_pixels": 8951,
+    "outside_pixels": 38112,
+    "outside_ratio": 0.8098081295285043
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 43953,
+    "inside_pixels": 8238,
+    "outside_pixels": 35715,
+    "outside_ratio": 0.8125725206470548
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 59576,
+    "inside_pixels": 16680,
+    "outside_pixels": 42896,
+    "outside_ratio": 0.7200214851618101
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 58320,
+    "inside_pixels": 16320,
+    "outside_pixels": 42000,
+    "outside_ratio": 0.720164609053498
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 52341,
+    "inside_pixels": 13691,
+    "outside_pixels": 38650,
+    "outside_ratio": 0.7384268546646032
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 52492,
+    "inside_pixels": 9683,
+    "outside_pixels": 42809,
+    "outside_ratio": 0.8155337956260001
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 47736,
+    "inside_pixels": 8909,
+    "outside_pixels": 38827,
+    "outside_ratio": 0.813369364839953
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 35829,
+    "inside_pixels": 12013,
+    "outside_pixels": 23816,
+    "outside_ratio": 0.664712942030199
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 39913,
+    "inside_pixels": 10105,
+    "outside_pixels": 29808,
+    "outside_ratio": 0.7468243429459074
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 42488,
+    "inside_pixels": 10530,
+    "outside_pixels": 31958,
+    "outside_ratio": 0.7521653172660516
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 39426,
+    "inside_pixels": 8993,
+    "outside_pixels": 30433,
+    "outside_ratio": 0.7719017906964947
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 40903,
+    "inside_pixels": 7891,
+    "outside_pixels": 33012,
+    "outside_ratio": 0.8070801652690511
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 58647,
+    "inside_pixels": 8557,
+    "outside_pixels": 50090,
+    "outside_ratio": 0.8540931334936144
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 54711,
+    "inside_pixels": 8594,
+    "outside_pixels": 46117,
+    "outside_ratio": 0.842920070918097
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 55596,
+    "inside_pixels": 5943,
+    "outside_pixels": 49653,
+    "outside_ratio": 0.8931038204187352
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 49809,
+    "inside_pixels": 5058,
+    "outside_pixels": 44751,
+    "outside_ratio": 0.8984520869722339
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 46813,
+    "inside_pixels": 5184,
+    "outside_pixels": 41629,
+    "outside_ratio": 0.8892615299169034
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 88962,
+    "inside_pixels": 31089,
+    "outside_pixels": 57873,
+    "outside_ratio": 0.6505361839886693
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 82115,
+    "inside_pixels": 31287,
+    "outside_pixels": 50828,
+    "outside_ratio": 0.6189855690190587
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 81505,
+    "inside_pixels": 29150,
+    "outside_pixels": 52355,
+    "outside_ratio": 0.6423532298631985
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 82340,
+    "inside_pixels": 28120,
+    "outside_pixels": 54220,
+    "outside_ratio": 0.6584891911586106
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 75010,
+    "inside_pixels": 26949,
+    "outside_pixels": 48061,
+    "outside_ratio": 0.6407279029462738
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 56144,
+    "inside_pixels": 16780,
+    "outside_pixels": 39364,
+    "outside_ratio": 0.701125676831006
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 53992,
+    "inside_pixels": 15871,
+    "outside_pixels": 38121,
+    "outside_ratio": 0.7060490443028596
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 59663,
+    "inside_pixels": 15736,
+    "outside_pixels": 43927,
+    "outside_ratio": 0.7362519484437591
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 54039,
+    "inside_pixels": 13836,
+    "outside_pixels": 40203,
+    "outside_ratio": 0.7439626936101704
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 54596,
+    "inside_pixels": 13945,
+    "outside_pixels": 40651,
+    "outside_ratio": 0.7445783573888197
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 66569,
+    "inside_pixels": 21742,
+    "outside_pixels": 44827,
+    "outside_ratio": 0.6733915185747119
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 64218,
+    "inside_pixels": 20767,
+    "outside_pixels": 43451,
+    "outside_ratio": 0.6766171478401695
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 66849,
+    "inside_pixels": 19965,
+    "outside_pixels": 46884,
+    "outside_ratio": 0.701341830094691
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 53619,
+    "inside_pixels": 12233,
+    "outside_pixels": 41386,
+    "outside_ratio": 0.7718532609709244
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 54899,
+    "inside_pixels": 14658,
+    "outside_pixels": 40241,
+    "outside_ratio": 0.7330006011038452
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 39808,
+    "inside_pixels": 17022,
+    "outside_pixels": 22786,
+    "outside_ratio": 0.5723975080385852
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 47086,
+    "inside_pixels": 16557,
+    "outside_pixels": 30529,
+    "outside_ratio": 0.6483668181625112
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 50274,
+    "inside_pixels": 16208,
+    "outside_pixels": 34066,
+    "outside_ratio": 0.6776067152007001
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 49075,
+    "inside_pixels": 16328,
+    "outside_pixels": 32747,
+    "outside_ratio": 0.6672847682119205
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 46143,
+    "inside_pixels": 14994,
+    "outside_pixels": 31149,
+    "outside_ratio": 0.6750536376048372
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 59575,
+    "inside_pixels": 17999,
+    "outside_pixels": 41576,
+    "outside_ratio": 0.6978766261015527
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 62788,
+    "inside_pixels": 19567,
+    "outside_pixels": 43221,
+    "outside_ratio": 0.6883640186022807
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 60892,
+    "inside_pixels": 14694,
+    "outside_pixels": 46198,
+    "outside_ratio": 0.7586875123168889
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 60770,
+    "inside_pixels": 14615,
+    "outside_pixels": 46155,
+    "outside_ratio": 0.7595030442652625
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 56443,
+    "inside_pixels": 15346,
+    "outside_pixels": 41097,
+    "outside_ratio": 0.7281150895593785
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 60166,
+    "inside_pixels": 25522,
+    "outside_pixels": 34644,
+    "outside_ratio": 0.5758069341488549
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 73623,
+    "inside_pixels": 25562,
+    "outside_pixels": 48061,
+    "outside_ratio": 0.6527987177919944
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 72797,
+    "inside_pixels": 25104,
+    "outside_pixels": 47693,
+    "outside_ratio": 0.655150624338915
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 64624,
+    "inside_pixels": 18680,
+    "outside_pixels": 45944,
+    "outside_ratio": 0.7109433027977222
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 58413,
+    "inside_pixels": 16903,
+    "outside_pixels": 41510,
+    "outside_ratio": 0.7106294831629946
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 51739,
+    "inside_pixels": 15411,
+    "outside_pixels": 36328,
+    "outside_ratio": 0.7021395852258451
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 48663,
+    "inside_pixels": 14295,
+    "outside_pixels": 34368,
+    "outside_ratio": 0.7062449910609704
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 53379,
+    "inside_pixels": 16600,
+    "outside_pixels": 36779,
+    "outside_ratio": 0.6890162798104124
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 43088,
+    "inside_pixels": 10676,
+    "outside_pixels": 32412,
+    "outside_ratio": 0.7522279985146677
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 43991,
+    "inside_pixels": 12133,
+    "outside_pixels": 31858,
+    "outside_ratio": 0.7241935850514878
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 56516,
+    "inside_pixels": 20770,
+    "outside_pixels": 35746,
+    "outside_ratio": 0.6324934531813999
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 61958,
+    "inside_pixels": 21166,
+    "outside_pixels": 40792,
+    "outside_ratio": 0.6583814842312534
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 57725,
+    "inside_pixels": 21333,
+    "outside_pixels": 36392,
+    "outside_ratio": 0.6304374187960156
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 54769,
+    "inside_pixels": 14339,
+    "outside_pixels": 40430,
+    "outside_ratio": 0.7381913126038453
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 61965,
+    "inside_pixels": 16649,
+    "outside_pixels": 45316,
+    "outside_ratio": 0.7313160655208586
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 40287,
+    "inside_pixels": 19055,
+    "outside_pixels": 21232,
+    "outside_ratio": 0.5270186412490382
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 49803,
+    "inside_pixels": 17591,
+    "outside_pixels": 32212,
+    "outside_ratio": 0.6467883460835693
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 47752,
+    "inside_pixels": 15894,
+    "outside_pixels": 31858,
+    "outside_ratio": 0.6671553023957112
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 45165,
+    "inside_pixels": 15812,
+    "outside_pixels": 29353,
+    "outside_ratio": 0.6499059005867375
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 45464,
+    "inside_pixels": 15576,
+    "outside_pixels": 29888,
+    "outside_ratio": 0.6573992609537216
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 58761,
+    "inside_pixels": 17767,
+    "outside_pixels": 40994,
+    "outside_ratio": 0.6976395908851108
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 58245,
+    "inside_pixels": 17383,
+    "outside_pixels": 40862,
+    "outside_ratio": 0.701553781440467
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 60669,
+    "inside_pixels": 16557,
+    "outside_pixels": 44112,
+    "outside_ratio": 0.7270929140088018
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 61698,
+    "inside_pixels": 15179,
+    "outside_pixels": 46519,
+    "outside_ratio": 0.7539790592887938
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 61935,
+    "inside_pixels": 16460,
+    "outside_pixels": 45475,
+    "outside_ratio": 0.7342375070638573
+  }
+]

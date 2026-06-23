@@ -1,0 +1,26 @@
+[
+  {
+    "variant": "d100_s4_lora",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_d100_s4_lora_masked.png",
+    "diff_pixels": 8608,
+    "inside_pixels": 8608,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "variant": "d085_s8_lora",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_d085_s8_lora_masked.png",
+    "diff_pixels": 6280,
+    "inside_pixels": 6280,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "variant": "d100_s8_nolora",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_d100_s8_nolora_masked.png",
+    "diff_pixels": 10813,
+    "inside_pixels": 10813,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  }
+]

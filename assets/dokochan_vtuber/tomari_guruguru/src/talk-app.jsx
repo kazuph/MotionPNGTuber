@@ -17,15 +17,6 @@ const TALK_DEFAULTS = /*EDITMODE-BEGIN*/{
 }/*EDITMODE-END*/;
 
 const { rows: ROWS, cols: COLS } = charConfig;
-const ASSET_SET_OPTIONS = [
-  { label: '既存 default slices2', value: 'slices2' },
-  { label: '既存 v3 refedit', value: 'generated_v3/slices_refedit_png' },
-  { label: '既存 v3 cells', value: 'generated_v3/slices_cells_png' },
-  { label: '既存最良 v3 refedit BC', value: 'generated_v3/slices_refedit_bc_png' },
-  { label: '候補 GPT髪飾り復元', value: 'generated_v6_gpt_hairclip/slices_gpt_hairclip_candidate_01_png' },
-];
-const DEFAULT_ASSET_BASE = 'generated_v3/slices_refedit_bc_png';
-const ASSET_SET_VALUES = new Set(ASSET_SET_OPTIONS.map((option) => option.value));
 // シート: 目開け×口[とじ/中間/開け] = A/B/C, 目閉じ×口[とじ/中間/開け] = D/E/F
 const SHEETS = [
   charConfig.sheets.eyesOpen.close,   // A
@@ -97,9 +88,7 @@ function makeAudioEngine() {
 
 function App() {
   const [t, setTweak] = useTweaks(TALK_DEFAULTS);
-  const [assetBase, setAssetBaseState] = useState(
-    ASSET_SET_VALUES.has(charConfig.basePath) ? charConfig.basePath : DEFAULT_ASSET_BASE
-  );
+  const assetBase = charConfig.basePath;
   const [cell, setCell] = useState({ r: 2, c: 2 });
   const [mouth, setMouth] = useState(0);        // 0:とじ 1:中間 2:開け
   const [blink, setBlink] = useState(false);
@@ -116,18 +105,6 @@ function App() {
   const env = useRef(0);
   const tweaksRef = useRef(t);
   tweaksRef.current = t;
-
-  const setAssetBase = (nextBase) => {
-    const safeBase = ASSET_SET_VALUES.has(nextBase) ? nextBase : DEFAULT_ASSET_BASE;
-    setAssetBaseState(safeBase);
-    const url = new URL(window.location.href);
-    url.searchParams.set('base', safeBase);
-    window.history.replaceState(null, '', url);
-  };
-
-  useEffect(() => {
-    if (!ASSET_SET_VALUES.has(charConfig.basePath)) setAssetBase(DEFAULT_ASSET_BASE);
-  }, []);
 
   // マウス追従
   useEffect(() => {
@@ -346,43 +323,7 @@ function App() {
         color: subColor, textDecoration: 'none', letterSpacing: '0.06em'
       }}>← ぐるぐる版</a>
 
-      <label style={{
-        position: 'absolute', top: 16, left: 132, zIndex: 4,
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '8px 10px', borderRadius: 8,
-        background: dark ? 'rgba(255,248,238,0.14)' : 'rgba(255,255,255,0.72)',
-        border: dark ? '1px solid rgba(255,248,238,0.18)' : '1px solid rgba(60,48,38,0.14)',
-        color: inkColor, fontSize: 12, fontWeight: 700,
-        boxShadow: '0 8px 28px rgba(0,0,0,0.10)',
-        backdropFilter: 'blur(14px) saturate(150%)',
-        WebkitBackdropFilter: 'blur(14px) saturate(150%)',
-        cursor: 'default'
-      }}>
-        <span>素材</span>
-        <select
-          value={assetBase}
-          onChange={(e) => setAssetBase(e.target.value)}
-          style={{
-            appearance: 'auto',
-            maxWidth: 'min(52vw, 260px)',
-            border: dark ? '1px solid rgba(255,248,238,0.22)' : '1px solid rgba(60,48,38,0.16)',
-            borderRadius: 6,
-            padding: '4px 8px',
-            background: dark ? 'rgba(43,41,38,0.85)' : 'rgba(255,255,255,0.90)',
-            color: inkColor,
-            font: 'inherit'
-          }}
-        >
-          {ASSET_SET_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
-      </label>
-
       <TweaksPanel>
-        <TweakSection label="素材"></TweakSection>
-        <TweakSelect label="素材セット" value={assetBase} options={ASSET_SET_OPTIONS}
-          onChange={setAssetBase}></TweakSelect>
         <TweakSection label="口パク"></TweakSection>
         <TweakSlider label="マイク感度" value={t.micGain} min={0.3} max={5} step={0.1}
           onChange={(v) => setTweak('micGain', v)}></TweakSlider>

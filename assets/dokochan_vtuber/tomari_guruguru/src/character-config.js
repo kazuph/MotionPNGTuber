@@ -2,7 +2,8 @@
 // 新キャラ差し替え時はこのファイルを書き換えるだけ
 
 const params = new URLSearchParams(window.location.search);
-const basePath = params.get('base') || 'slices2';
+const defaultBasePath = 'generated_v6_gpt_hairclip/slices_gpt_hairclip_candidate_01_png';
+const basePath = params.get('base') || defaultBasePath;
 
 export default {
   // スライス画像のベースパス（public/ からの相対パス）

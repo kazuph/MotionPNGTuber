@@ -149,14 +149,14 @@ test.describe('Dokochan tomari-guruguru runtime', () => {
 
   test('talk page can use GPT hairclip asset set for mouth switching', async ({ page }) => {
     await page.addInitScript(() => { Math.random = () => 1; });
-    await page.goto(`/talk.html?base=${gptHairclipBase}`, { waitUntil: 'networkidle' });
+    await page.goto('/talk.html', { waitUntil: 'networkidle' });
 
     await expect.poll(async () => {
       const sources = await visibleSources(page);
       return sources.find((src) => src && src.includes(`${gptHairclipBase}/A/r2c2.png`)) || '';
     }, { timeout: 5000 }).toContain(`${gptHairclipBase}/A/r2c2.png`);
 
-    await expect(page.locator('select').first()).toHaveValue(gptHairclipBase);
+    await expect(page.locator('select')).toHaveCount(0);
     await page.getByRole('button', { name: 'マイク開始' }).click();
     await expect(page.getByRole('button', { name: 'マイク停止' })).toBeVisible();
     await expect.poll(async () => {

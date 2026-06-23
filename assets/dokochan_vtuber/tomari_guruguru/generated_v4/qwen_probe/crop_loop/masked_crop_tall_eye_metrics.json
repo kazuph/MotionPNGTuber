@@ -1,0 +1,18 @@
+[
+  {
+    "variant": "d100_s4_lora",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_d100_s4_lora_tall_eye_masked.png",
+    "diff_pixels": 25492,
+    "inside_pixels": 25492,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "variant": "d100_s8_nolora",
+    "output": "assets/dokochan_vtuber/tomari_guruguru/generated_v4/qwen_probe/crop_loop/A_r2c2_closed_eyes_d100_s8_nolora_tall_eye_masked.png",
+    "diff_pixels": 29655,
+    "inside_pixels": 29655,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  }
+]

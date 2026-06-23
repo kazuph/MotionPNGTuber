@@ -1,0 +1,1252 @@
+[
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 28867,
+    "inside_pixels": 28867,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 27076,
+    "inside_pixels": 27076,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 22460,
+    "inside_pixels": 22460,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 21868,
+    "inside_pixels": 21868,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 0,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 29313,
+    "inside_pixels": 29313,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 32096,
+    "inside_pixels": 32096,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 33990,
+    "inside_pixels": 33990,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 36054,
+    "inside_pixels": 36054,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 32937,
+    "inside_pixels": 32937,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 1,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 35044,
+    "inside_pixels": 35044,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 32373,
+    "inside_pixels": 32373,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 31526,
+    "inside_pixels": 31526,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 37857,
+    "inside_pixels": 37857,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 26846,
+    "inside_pixels": 26846,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 2,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 37473,
+    "inside_pixels": 37473,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 34239,
+    "inside_pixels": 34239,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 35067,
+    "inside_pixels": 35067,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 45772,
+    "inside_pixels": 45772,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 32921,
+    "inside_pixels": 32921,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 3,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 37428,
+    "inside_pixels": 37428,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 43818,
+    "inside_pixels": 43818,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 38160,
+    "inside_pixels": 38160,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 36212,
+    "inside_pixels": 36212,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 36664,
+    "inside_pixels": 36664,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "B",
+    "row": 4,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 38193,
+    "inside_pixels": 38193,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 24979,
+    "inside_pixels": 24979,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 25326,
+    "inside_pixels": 25326,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 18818,
+    "inside_pixels": 18818,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 26533,
+    "inside_pixels": 26533,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 0,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 26485,
+    "inside_pixels": 26485,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 33918,
+    "inside_pixels": 33918,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 30875,
+    "inside_pixels": 30875,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 23210,
+    "inside_pixels": 23210,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 27373,
+    "inside_pixels": 27373,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 1,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 31366,
+    "inside_pixels": 31366,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 29758,
+    "inside_pixels": 29758,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 28561,
+    "inside_pixels": 28561,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 30857,
+    "inside_pixels": 30857,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 29863,
+    "inside_pixels": 29863,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 2,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 31838,
+    "inside_pixels": 31838,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 27781,
+    "inside_pixels": 27781,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 39507,
+    "inside_pixels": 39507,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 43378,
+    "inside_pixels": 43378,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 37177,
+    "inside_pixels": 37177,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 3,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 33897,
+    "inside_pixels": 33897,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 0,
+    "kind": "mouth",
+    "diff_pixels": 42377,
+    "inside_pixels": 42377,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 1,
+    "kind": "mouth",
+    "diff_pixels": 39569,
+    "inside_pixels": 39569,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 2,
+    "kind": "mouth",
+    "diff_pixels": 40067,
+    "inside_pixels": 40067,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 3,
+    "kind": "mouth",
+    "diff_pixels": 36532,
+    "inside_pixels": 36532,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "C",
+    "row": 4,
+    "col": 4,
+    "kind": "mouth",
+    "diff_pixels": 39509,
+    "inside_pixels": 39509,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 39572,
+    "inside_pixels": 39572,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 43546,
+    "inside_pixels": 43546,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 47904,
+    "inside_pixels": 47904,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 42252,
+    "inside_pixels": 42252,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 0,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 45754,
+    "inside_pixels": 45754,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 47369,
+    "inside_pixels": 47369,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 52919,
+    "inside_pixels": 52919,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 49141,
+    "inside_pixels": 49141,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 44221,
+    "inside_pixels": 44221,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 1,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 48557,
+    "inside_pixels": 48557,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 46893,
+    "inside_pixels": 46893,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 52088,
+    "inside_pixels": 52088,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 54399,
+    "inside_pixels": 54399,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 49776,
+    "inside_pixels": 49776,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 2,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 46818,
+    "inside_pixels": 46818,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 39727,
+    "inside_pixels": 39727,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 41270,
+    "inside_pixels": 41270,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 43457,
+    "inside_pixels": 43457,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 41572,
+    "inside_pixels": 41572,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 3,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 40115,
+    "inside_pixels": 40115,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 0,
+    "kind": "eyes",
+    "diff_pixels": 32677,
+    "inside_pixels": 32677,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 1,
+    "kind": "eyes",
+    "diff_pixels": 36211,
+    "inside_pixels": 36211,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 2,
+    "kind": "eyes",
+    "diff_pixels": 34542,
+    "inside_pixels": 34542,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 3,
+    "kind": "eyes",
+    "diff_pixels": 37114,
+    "inside_pixels": 37114,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "D",
+    "row": 4,
+    "col": 4,
+    "kind": "eyes",
+    "diff_pixels": 34938,
+    "inside_pixels": 34938,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 53672,
+    "inside_pixels": 53672,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 53411,
+    "inside_pixels": 53411,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 60555,
+    "inside_pixels": 60555,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 48175,
+    "inside_pixels": 48175,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 0,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 60048,
+    "inside_pixels": 60048,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 59846,
+    "inside_pixels": 59846,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 63976,
+    "inside_pixels": 63976,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 68247,
+    "inside_pixels": 68247,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 56907,
+    "inside_pixels": 56907,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 1,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 66166,
+    "inside_pixels": 66166,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 59799,
+    "inside_pixels": 59799,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 60167,
+    "inside_pixels": 60167,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 69138,
+    "inside_pixels": 69138,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 52644,
+    "inside_pixels": 52644,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 2,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 64483,
+    "inside_pixels": 64483,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 52795,
+    "inside_pixels": 52795,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 52926,
+    "inside_pixels": 52926,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 67362,
+    "inside_pixels": 67362,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 50549,
+    "inside_pixels": 50549,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 3,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 56480,
+    "inside_pixels": 56480,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 56137,
+    "inside_pixels": 56137,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 51969,
+    "inside_pixels": 51969,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 51604,
+    "inside_pixels": 51604,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 50582,
+    "inside_pixels": 50582,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "E",
+    "row": 4,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 51397,
+    "inside_pixels": 51397,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 49879,
+    "inside_pixels": 49879,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 51861,
+    "inside_pixels": 51861,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 57140,
+    "inside_pixels": 57140,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 52914,
+    "inside_pixels": 52914,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 0,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 57180,
+    "inside_pixels": 57180,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 61820,
+    "inside_pixels": 61820,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 60930,
+    "inside_pixels": 60930,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 55682,
+    "inside_pixels": 55682,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 51378,
+    "inside_pixels": 51378,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 1,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 62359,
+    "inside_pixels": 62359,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 57536,
+    "inside_pixels": 57536,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 57238,
+    "inside_pixels": 57238,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 62212,
+    "inside_pixels": 62212,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 55725,
+    "inside_pixels": 55725,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 2,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 58988,
+    "inside_pixels": 58988,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 46338,
+    "inside_pixels": 46338,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 57257,
+    "inside_pixels": 57257,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 64924,
+    "inside_pixels": 64924,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 54774,
+    "inside_pixels": 54774,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 3,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 52950,
+    "inside_pixels": 52950,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 0,
+    "kind": "eyes_mouth",
+    "diff_pixels": 54573,
+    "inside_pixels": 54573,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 1,
+    "kind": "eyes_mouth",
+    "diff_pixels": 53343,
+    "inside_pixels": 53343,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 2,
+    "kind": "eyes_mouth",
+    "diff_pixels": 55437,
+    "inside_pixels": 55437,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 3,
+    "kind": "eyes_mouth",
+    "diff_pixels": 50485,
+    "inside_pixels": 50485,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  },
+  {
+    "sheet": "F",
+    "row": 4,
+    "col": 4,
+    "kind": "eyes_mouth",
+    "diff_pixels": 52751,
+    "inside_pixels": 52751,
+    "outside_pixels": 0,
+    "outside_ratio": 0.0
+  }
+]

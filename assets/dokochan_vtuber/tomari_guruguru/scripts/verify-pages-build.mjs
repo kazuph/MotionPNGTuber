@@ -5,6 +5,7 @@ const DIST = 'dist';
 const BASE = '/dokochan-guruguru/';
 const HTML_FILES = ['index.html', 'talk.html', 'guruguru.html'];
 const SHEETS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const DEFAULT_ASSET_BASE = 'generated_v6_gpt_hairclip/slices_gpt_hairclip_candidate_01_png';
 
 function fail(message) {
   console.error(`Pages build verification failed: ${message}`);
@@ -48,11 +49,11 @@ function assertReferencedBaseAssetsExist(file, html) {
 
 function assertSliceImages() {
   for (const sheet of SHEETS) {
-    const dir = join(DIST, 'slices2', sheet);
+    const dir = join(DIST, ...DEFAULT_ASSET_BASE.split('/'), sheet);
     assertFile(dir);
     const pngFiles = readdirSync(dir).filter((name) => name.endsWith('.png'));
     if (pngFiles.length !== 25) {
-      fail(`${posix.join('dist', 'slices2', sheet)} should contain 25 png files, found ${pngFiles.length}`);
+      fail(`${posix.join('dist', DEFAULT_ASSET_BASE, sheet)} should contain 25 png files, found ${pngFiles.length}`);
     }
     for (let r = 0; r < 5; r += 1) {
       for (let c = 0; c < 5; c += 1) {
