@@ -15,7 +15,7 @@
 
 | 動画 | 表情の流れ |
 |------|------------|
-| ![どこちゃん表情切替デモ](assets/dokochan_vtuber/demo/dokochan-emotion-demo.mp4) | joy → anger → sad → surprise |
+| ![どこちゃん表情切替デモ](assets/dokochan_vtuber/demo/dokochan-emotion-demo.gif) | joy → anger → sad → surprise |
 
 [24秒のMP4を再生](assets/dokochan_vtuber/demo/dokochan-emotion-demo.mp4)
 
