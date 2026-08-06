@@ -11,6 +11,14 @@
 
 📖 **[詳細な使い方はこちら（YouTube）](https://www.youtube.com/watch?v=mxZHzZ_eAkY)**
 
+## 🎬 どこちゃん表情切替デモ
+
+| 動画 | 表情の流れ |
+|------|------------|
+| ![どこちゃん表情切替デモ](assets/dokochan_vtuber/demo/dokochan-emotion-demo.mp4) | joy → anger → sad → surprise |
+
+[24秒のMP4を再生](assets/dokochan_vtuber/demo/dokochan-emotion-demo.mp4)
+
 ## 📢 更新情報
 
 | 日付 | 内容 |

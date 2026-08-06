@@ -11,6 +11,14 @@ By using looping video, you can achieve rich expressions like **hair swaying** a
 
 📖 **[How to use (YouTube)](https://www.youtube.com/watch?v=mxZHzZ_eAkY)**
 
+## 🎬 Dokochan emotion demo
+
+| Demo | Flow |
+|------|------|
+| ![Dokochan emotion switching demo](assets/dokochan_vtuber/demo/dokochan-emotion-demo.mp4) | joy → anger → sad → surprise |
+
+[Play the 24-second MP4](assets/dokochan_vtuber/demo/dokochan-emotion-demo.mp4)
+
 ## 📢 Updates
 
 | Date | Details |
