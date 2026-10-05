@@ -255,3 +255,7 @@ assets/dokochan_vtuber/seedance_*_request.json
 assets/dokochan_vtuber/seedance_*_result.json
 assets/dokochan_vtuber/seedance_layers/
 *.bak.*
+
+# Embedded Mesh Avatar Studio documentation (upstream product files)
+!apps/mesh-avatar-studio/docs/
+!apps/mesh-avatar-studio/docs/**
