@@ -1,0 +1,11 @@
+{
+  "repository": "https://github.com/852wa/Anime2.5DRig",
+  "commit": "7ddbd9943ea3152561b3dc8348fd752c850f3e95",
+  "archive": "https://codeload.github.com/852wa/Anime2.5DRig/tar.gz/7ddbd9943ea3152561b3dc8348fd752c850f3e95",
+  "retrieved_at": "2026-10-05T08:13:47.178515+00:00",
+  "import": "ordinary files; local Sample C integration listed below, upstream licenses preserved",
+  "local_changes": {
+    "index.html": "Add Sample C (Dokochan) beside A/B in header and empty-state actions; revision query ensures updated app script is loaded.",
+    "lib/app.js": "Relative Sample C PSD + paired JSON loading with existing validation and failures retained. Actual v3 PSD and its official clean export only: shared neck/topwear mesh and continuous deformation; hair keeps official mesh/springs/bang movement, adds a smooth garment-minus-rigid displacement field without mesh-boundary clipping. Existing depth controls retained. No mouth input/material changes or generated assets."
+  }
+}

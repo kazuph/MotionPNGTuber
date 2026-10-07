@@ -21,6 +21,10 @@
 
 ## 📢 更新情報
 
+### Dokochan / Anime2.5DRigのローカル試用
+
+macOSでは `apps/anime25d-rig/start_macos.command` を起動し、編集画面の **サンプルC（Dokochan）** を選びます。Python 3で動作し、npm・GPU・SSHは不要です。[起動・保存・OBSの手順](apps/anime25d-rig/LOCAL_RUN.md)を参照してください。
+
 | 日付 | 内容 |
 |------|------|
 | 2026/04/13 | **重大不具合を修正**。**口PNG素材を作る** 画面で動画選択直後に `解析エラー` になることがあった問題を修正。原因だった自動検出スクリプトのパス解決を見直し、回帰テストを追加 |

@@ -259,3 +259,7 @@ assets/dokochan_vtuber/seedance_layers/
 # Embedded Mesh Avatar Studio documentation (upstream product files)
 !apps/mesh-avatar-studio/docs/
 !apps/mesh-avatar-studio/docs/**
+
+# Bundled Anime2.5DRig runtime (JS/WASM and notices)
+!/apps/anime25d-rig/lib/
+!/apps/anime25d-rig/lib/**
