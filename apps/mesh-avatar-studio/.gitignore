@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+docs/screenshots/
+test-results/
+playwright-report/
+__pycache__/
+projects/*
+!projects/dokochan/
+!projects/dokochan-bust/
+projects/*/review/
+projects/*/work/
+projects/*/variant-requests/
+work/
+samples/**/review/
